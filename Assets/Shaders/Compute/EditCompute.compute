@@ -1,0 +1,79 @@
+
+#pragma kernel CSMain
+
+int resolution;
+//Resolution squared
+int resolution2;
+
+//Radius of brush
+int radius;
+int diameter;
+//Radius squared
+int sqrRadius;
+//Whether to fill or erase
+int fillType;
+
+//Coordinate for us to edit
+float3 coord;
+
+StructuredBuffer<float> tables;
+
+//Standard voxel struct for the voxels buffer
+struct Voxel
+{
+    //Whether to update this voxel this update
+    int update;
+    //Is this voxel solid?
+    int solid;
+    //Relative density of the surrounding area (area size determined by "weightingRadius")
+    float density;
+    //Position of the verticy this voxel will hold
+    float4 position;
+    //Position of vert in buffer
+    int indicy;
+};
+
+RWStructuredBuffer<Voxel> voxels;
+
+void UpdateAdjacentVoxels(int o)
+{
+    for (int i = 0; i < 27; i++)
+    {
+        voxels[o + tables[57 + i]].update = 1;
+    }
+}
+
+[numthreads(8, 8, 8)]
+void CSMain(int3 id : SV_DispatchThreadID)
+{
+    //If we are at the point where voxels are being changed, iterate thro a cube with side length = diameter.
+    //Then check if the points are within the sphere.
+    if (coord.x == id.x && coord.y == id.y && coord.z == id.z)
+    {
+        //Where to start looping from on each axis
+        int xAreaStart = max(id.x - radius, 0);
+        int yAreaStart = max(id.y - radius, 0);
+        int zAreaStart = max(id.z - radius, 0);
+        for (int x = xAreaStart; x < min(xAreaStart + diameter, resolution); x++)
+        {
+            for (int y = yAreaStart; y < min(yAreaStart + diameter, resolution); y++)
+            {
+                for (int z = zAreaStart; z < min(zAreaStart + diameter, resolution); z++)
+                {
+                    int xDistance = x - id.x;
+                    int yDistance = y - id.y;
+                    int zDistance = z - id.z;
+                    //Check distance
+                    float sqrDistance = xDistance * xDistance + yDistance * yDistance + zDistance * zDistance;
+                    if (sqrDistance < sqrRadius)
+                    {
+                        int o = x * resolution2 + y * resolution + z;
+                        //Set cell to solid and hit it with an update
+                        voxels[o].solid = fillType;
+                        UpdateAdjacentVoxels(o);
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,46 @@
+#pragma kernel CSMain
+
+int resolution;
+
+int resolution2;
+
+struct Vert
+{
+    float4 position;
+    float3 normal;
+};
+
+struct Tri
+{
+    Vert a;
+    Vert b;
+    Vert c;
+};
+
+struct Quad
+{
+    Tri topLeft;
+    Tri bottomRight;
+};
+
+RWStructuredBuffer<Quad> verts;
+AppendStructuredBuffer<Quad> unorderedVerts;
+
+[numthreads(8, 8, 8)]
+void CSMain(int3 id : SV_DispatchThreadID)
+{
+    int o = id.x * resolution2 + id.y * resolution + id.z;
+    for (uint i = 0; i < 6; i++)
+    {
+        if (verts[o * 6 + i].bottomRight.a.position.w != -1.0)
+        {
+            unorderedVerts.Append(verts[o * 6 + i]);
+            verts.IncrementCounter();
+            verts.IncrementCounter();
+            verts.IncrementCounter();
+            verts.IncrementCounter();
+            verts.IncrementCounter();
+            verts.IncrementCounter();
+        }
+    }
+}

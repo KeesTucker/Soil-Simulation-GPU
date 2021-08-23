@@ -1,0 +1,76 @@
+﻿#pragma kernel CSMain
+
+int resolution;
+int resolution2;
+int weightingRadius;
+int diameter;
+int sqrWeightingRadius;
+int updateAll;
+
+struct Voxel
+{
+    int update;
+    int solid;
+    float density;
+    float4 position;
+    int indicy;
+};
+
+RWStructuredBuffer<Voxel> voxels;
+
+StructuredBuffer<float> tables;
+
+[numthreads(8, 8, 8)]
+void CSMain(int3 id : SV_DispatchThreadID)
+{
+    int o = id.x * resolution2 + id.y * resolution + id.z;
+    
+    if (voxels[o].update == 1 || updateAll == 1)
+    {
+        voxels[o].density = -1;
+        
+        for (int i = 0; i < 27; i++)
+        {
+            if (voxels[o + tables[57 + i]].solid == 1)
+            {
+                int xAreaStart = max(id.x - weightingRadius, 0);
+                int yAreaStart = max(id.y - weightingRadius, 0);
+                int zAreaStart = max(id.z - weightingRadius, 0);
+
+                int totalCellCount = 0;
+                int solidCellCount = 0;
+    
+                for (int x = xAreaStart; x < min(xAreaStart + diameter, resolution); x++)
+                {
+                    for (int y = yAreaStart; y < min(yAreaStart + diameter, resolution); y++)
+                    {
+                        for (int z = zAreaStart; z < min(zAreaStart + diameter, resolution); z++)
+                        {
+                            int xDistance = x - id.x;
+                            int yDistance = y - id.y;
+                            int zDistance = z - id.z;
+                            float sqrDistance = xDistance * xDistance + yDistance * yDistance + zDistance * zDistance;
+                            if (sqrDistance < sqrWeightingRadius)
+                            {
+                                if (voxels[x * resolution2 + y * resolution + z].solid == 1)
+                                {
+                                    solidCellCount++;
+                                }
+                                totalCellCount++;
+                            }
+                        }
+                    }
+                }
+                if (totalCellCount != 0)
+                {
+                    voxels[o].density = (float) solidCellCount / (float) totalCellCount;
+                }
+                else
+                {
+                    voxels[o].density = 0;
+                }
+                break;
+            }
+        }
+    }
+}

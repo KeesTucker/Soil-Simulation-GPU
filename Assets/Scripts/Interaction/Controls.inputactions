@@ -1,0 +1,71 @@
+{
+    "name": "Controls",
+    "maps": [
+        {
+            "name": "Oculus Map",
+            "id": "c18f0133-2e49-4231-a7ba-112ea7af0e4f",
+            "actions": [
+                {
+                    "name": "RTrigger",
+                    "type": "Value",
+                    "id": "19599283-24a4-4642-9421-7154082af8c3",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "LTrigger",
+                    "type": "Value",
+                    "id": "7b6bf65e-be4e-4dc3-99b2-276848928888",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Thumbsticks",
+                    "type": "Value",
+                    "id": "35a9b0cc-4e0d-4e77-827e-4439816bea68",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "4e734ba6-dafb-4a85-ad76-acd7a6acfb2d",
+                    "path": "*/{Primary2DAxis}",
+                    "interactions": "",
+                    "processors": "StickDeadzone",
+                    "groups": "",
+                    "action": "Thumbsticks",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5dbfa6e2-02fb-4c69-bd2f-48a50ea91af3",
+                    "path": "<XRController>{RightHand}/trigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RTrigger",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "07c530ab-5361-4742-ab7e-670a19198f73",
+                    "path": "<XRController>{LeftHand}/trigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LTrigger",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

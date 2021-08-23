@@ -1,0 +1,114 @@
+﻿#pragma kernel CSMain
+
+float voxelSize;
+
+float halfSize;
+
+int resolution;
+
+int resolution2;
+
+int updateAll;
+
+float angularCompensation;
+
+float correctionFactor;
+
+StructuredBuffer<float> tables;
+
+struct Voxel
+{
+    int update;
+    int solid;
+    float density;
+    float4 position;
+    int indicy;
+};
+
+RWStructuredBuffer<Voxel> voxels;
+
+float CalcVoxelNumber(int a, int b, int c, int d)
+{
+    int numSolid = 0;
+    if (voxels[a].solid == 1)
+    {
+        numSolid++;
+    }
+    if (voxels[b].solid == 1)
+    {
+        numSolid++;
+    }
+    if (voxels[c].solid == 1)
+    {
+        numSolid++;
+    }
+    if (voxels[d].solid == 1)
+    {
+        numSolid++;
+    }
+    
+    return float(numSolid);
+}
+
+[numthreads(8,8,8)]
+void CSMain (int3 id : SV_DispatchThreadID)
+{
+    int o = (id.x + 1) * resolution2 + (id.y + 1) * resolution + (id.z + 1);
+    if (voxels[o].update == 1 || updateAll == 1)
+    {
+        o -= resolution2 + resolution + 1;
+        if (id.x < resolution - 1 && id.y < resolution - 1 && id.z < resolution - 1)
+        {
+            
+            int x = o + resolution2;
+            int y = o + resolution;
+            int z = o + 1;
+            int xy = x + resolution;
+            int xz = x + 1;
+            int yz = y + 1;
+            int xyz = xy + 1;
+        
+            if (voxels[o].solid == 0 && voxels[x].solid == 0 && voxels[y].solid == 0 && voxels[z].solid == 0 &&
+            voxels[xy].solid == 0 && voxels[xz].solid == 0 && voxels[yz].solid == 0 && voxels[xyz].solid == 0)
+            {
+                voxels[o].position = float4(0, 0, 0, -1);
+            }
+            else if (voxels[o].solid == 1 && voxels[x].solid == 1 && voxels[y].solid == 1 && voxels[z].solid == 1 &&
+            voxels[xy].solid == 1 && voxels[xz].solid == 1 && voxels[yz].solid == 1 && voxels[xyz].solid == 1)
+            {
+                voxels[o].position = float4(0, 0, 0, 0);
+            }
+            else
+            {
+                float oD = voxels[o].density;
+                float xD = voxels[x].density;
+                float yD = voxels[y].density;
+                float zD = voxels[z].density;
+                float xyD = voxels[xy].density;
+                float xzD = voxels[xz].density;
+                float yzD = voxels[yz].density;
+                float xyzD = voxels[xyz].density;
+            
+                float2 xNeg = float2((oD + yD + zD + yzD) / 4.0, CalcVoxelNumber(o, y, z, yz));
+                float2 xPos = float2((xD + xyD + xzD + xyzD) / 4.0, CalcVoxelNumber(x, xy, xz, xyz));
+                float xOffset = tables[32 + (xNeg.y * 5) + xPos.y];
+                xOffset += (xNeg.x - xPos.x) * angularCompensation;
+                
+                float2 yNeg = float2((oD + xD + zD + xzD) / 4, CalcVoxelNumber(o, x, z, xz));
+                float2 yPos = float2((yD + xyD + yzD + xyzD) / 4, CalcVoxelNumber(y, xy, yz, xyz));
+                float yOffset = tables[32 + (yNeg.y * 5) + yPos.y];
+                yOffset += (yNeg.x - yPos.x - correctionFactor) * angularCompensation;
+            
+                float2 zNeg = float2((oD + xD + yD + xyD) / 4, CalcVoxelNumber(o, x, y, xy));
+                float2 zPos = float2((zD + xzD + yzD + xyzD) / 4, CalcVoxelNumber(z, xz, yz, xyz));
+                float zOffset = tables[32 + (zNeg.y * 5) + zPos.y];
+                zOffset += (zNeg.x - zPos.x) * angularCompensation;
+            
+                float4 offset = float4(xOffset, yOffset, zOffset, 0) * voxelSize;
+                float4 position = float4((id.x + 0.5) * voxelSize - halfSize, (id.y + 0.5) * voxelSize - halfSize, (id.z + 0.5) * voxelSize - halfSize, 1.0);
+            
+                voxels[o].position = position + offset;
+            }
+        }
+    }
+}

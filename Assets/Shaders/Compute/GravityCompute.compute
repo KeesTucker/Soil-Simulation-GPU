@@ -1,0 +1,80 @@
+﻿
+#pragma kernel CSMain
+
+int resolution;
+//Squared resolution
+int resolution2;
+
+//How fast voxels fall
+int fallRate;
+
+StructuredBuffer<float> tables;
+
+//Standard voxel struct for the voxels buffer
+struct Voxel
+{
+    //Whether to update this voxel this update
+    int update;
+    //Is this voxel solid?
+    int solid;
+    //Relative density of the surrounding area (area size determined by "weightingRadius")
+    float density;
+    //Position of the verticy this voxel will hold
+    float4 position;
+    //Position of vert in buffer
+    int indicy;
+};
+
+RWStructuredBuffer<Voxel> voxels;
+
+void UpdateAdjacentVoxels(int o)
+{
+    for (int i = 0; i < 27; i++)
+    {
+        voxels[o + tables[57 + i]].update = 1;
+    }
+}
+
+[numthreads(8, 8, 8)]
+void CSMain(int3 id : SV_DispatchThreadID)
+{
+    //Our position in voxel array
+    int i = id.x * resolution2 + id.y * resolution + id.z;
+    
+    int distanceUp;
+    int distanceDown;
+    
+    //If current voxel is solid and the one below it is empty and it is safe
+    if (voxels[i].solid == 1 && voxels[i - resolution].solid == 0 && id.y > 0)
+    {
+        //Iterate upwards until we find empty voxels again, this gived us our "distanceUp"
+        for (distanceUp = 0; id.y + distanceUp <= resolution; distanceUp++)
+        {
+            if (voxels[i + (distanceUp * resolution)].solid == 0)
+            {
+                break;
+            }
+        }
+        //Do the same except iterate downwards untill solid voxels are found. Constrain distanceDown to fallrate so voxel can only fall at that rate.
+        for (int distanceDown = 1; distanceDown <= fallRate; distanceDown++)
+        {
+            if (voxels[i - (distanceDown - 1) * resolution].solid == 1 || id.y - distanceDown <= 0)
+            {
+                break;
+            }
+        }  
+        //Move all voxels above us down by the distanceDown. Set their update flags so they are rendered
+        for (int u = 0; u <= distanceUp; u++)
+        {
+            if (voxels[i + u * resolution].solid == 1 && voxels[(i + u * resolution) - (distanceDown * resolution)].solid == 0)
+            {
+                voxels[i + u * resolution].solid = 0;
+                voxels[i + u * resolution].update = 1;
+                UpdateAdjacentVoxels(i + u * resolution);
+                voxels[(i + u * resolution) - (distanceDown * resolution)].solid = 1;
+                voxels[(i + u * resolution) - (distanceDown * resolution)].update = 1;
+                UpdateAdjacentVoxels((i + u * resolution) - (distanceDown * resolution));
+            }
+        }
+    }
+}

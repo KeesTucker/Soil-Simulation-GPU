@@ -1,0 +1,142 @@
+﻿#pragma kernel CSMain
+
+int resolution;
+
+int resolution2;
+
+int updateAll;
+
+struct Voxel
+{
+    int update;
+    int solid;
+    float density;
+    float4 position;
+    int indicy;
+};
+
+RWStructuredBuffer<Voxel> voxels;
+
+StructuredBuffer<float> tables;
+
+struct Vert
+{
+    float4 position;
+    float3 normal;
+};
+
+RWStructuredBuffer<Vert> verts;
+
+float3 NormalFromEdges(float3 x, float3 y, float3 z)
+{
+    
+    float3 v = y - x;
+    float3 w = z - x;
+    
+    float3 n = normalize(cross(v, w));
+    
+    return n;
+}
+
+void AddQuad(int i, int aCoord, int bCoord, int cCoord, int dCoord)
+{
+    Vert aVert;
+    Vert bVert;
+    Vert cVert;
+    Vert dVert;
+    
+    float3 a = voxels[aCoord].position.xyz;
+    float3 b = voxels[bCoord].position.xyz;
+    float3 c = voxels[cCoord].position.xyz;
+    float3 d = voxels[dCoord].position.xyz;
+    
+    aVert.position = float4(a, 1.0);
+    bVert.position = float4(b, 1.0);
+    cVert.position = float4(c, 1.0);
+    dVert.position = float4(d, 1.0);
+    
+    float3 normalA = NormalFromEdges(a, b, d);
+    float3 normalB = NormalFromEdges(b, c, a);
+    float3 normalC = NormalFromEdges(c, d, b);
+    float3 normalD = NormalFromEdges(d, a, c);
+    
+    aVert.normal = normalA;
+    bVert.normal = normalB;
+    cVert.normal = normalC;
+    dVert.normal = normalD;
+    
+    verts[i] = aVert;
+    verts[i + 1] = bVert;
+    verts[i + 2] = cVert;
+    verts[i + 3] = cVert;
+    verts[i + 4] = dVert;
+    verts[i + 5] = aVert;
+}
+
+void ResetQuad(int i)
+{
+    Vert vert;
+    vert.position = float4(0, 0, 0, -1.0);
+    vert.normal = float3(0, 0, 0);
+    
+    verts[i] = vert;
+    verts[i + 1] = vert;
+    verts[i + 2] = vert;
+    verts[i + 3] = vert;
+    verts[i + 4] = vert;
+    verts[i + 5] = vert;
+}
+
+[numthreads(8, 8, 8)]
+void CSMain(int3 id : SV_DispatchThreadID)
+{
+    int o = (id.x + 1) * resolution2 + (id.y + 1) * resolution + (id.z + 1);
+    if (voxels[o].update == 1 || updateAll == 1)
+    {
+        o -= resolution2 + resolution + 1;
+        if (id.x < resolution - 2 && id.y < resolution - 2 && id.z < resolution - 2)
+        {
+            for (uint i = 0; i < 6; i++)
+            {
+                int connectionIndex = i * 4 + 8;
+                int aCoord = o + tables[tables[connectionIndex]];
+                int bCoord = o + tables[tables[connectionIndex + 1]];
+                int cCoord = o + tables[tables[connectionIndex + 2]];
+                int dCoord = o + tables[tables[connectionIndex + 3]];
+            
+                int iInverse;
+                if (i % 2 == 0)
+                {
+                    iInverse = i + 1;
+                }
+                else
+                {
+                    iInverse = i - 1;
+                }
+            
+                connectionIndex = iInverse * 4 + 8;
+                int aCoordInverse = o + tables[tables[connectionIndex]];
+                int bCoordInverse = o + tables[tables[connectionIndex + 1]];
+                int cCoordInverse = o + tables[tables[connectionIndex + 2]];
+                int dCoordInverse = o + tables[tables[connectionIndex + 3]];
+            
+                if (voxels[aCoord].position.w == 1.0 &&
+                voxels[bCoord].position.w == 1.0 &&
+                voxels[cCoord].position.w == 1.0 &&
+                voxels[dCoord].position.w == 1.0 &&
+                (voxels[aCoordInverse].position.w == 0 ||
+                voxels[bCoordInverse].position.w == 0 ||
+                voxels[cCoordInverse].position.w == 0 ||
+                voxels[dCoordInverse].position.w == 0))
+                {
+                    AddQuad((o * 6 + i) * 6, aCoord, bCoord, cCoord, dCoord);
+                }
+                else
+                {
+                    ResetQuad((o * 6 + i) * 6);
+                }
+            }
+        }
+        voxels[o].update = 0;
+    }
+}

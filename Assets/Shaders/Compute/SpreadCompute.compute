@@ -1,0 +1,97 @@
+
+#pragma kernel CSMain
+
+int resolution;
+//Resolution squared
+int resolution2;
+
+//These two numbers are basically the rise and run of: "rise/run" = gradient.
+//So gradient of the piles that this soil will spread out into is equal to yGradient/xZGradient.
+int yGradient;
+int xZGradient;
+
+//Standard voxel struct for the voxels buffer
+struct Voxel
+{
+    //Whether to update this voxel this update
+    int update;
+    //Is this voxel solid?
+    int solid;
+    //Relative density of the surrounding area (area size determined by "weightingRadius")
+    float density;
+    //Position of the verticy this voxel will hold
+    float4 position;
+    //Position of vert in buffer
+    int indicy;
+};
+
+StructuredBuffer<float> tables;
+
+//Buffer to hold all our sexy voxel data <3
+RWStructuredBuffer<Voxel> voxels;
+
+void UpdateAdjacentVoxels(int o)
+{
+    for (int i = 0; i < 27; i++)
+    {
+        voxels[o + tables[57 + i]].update = 1;
+    }
+}
+
+[numthreads(8, 8, 8)]
+void CSMain(int3 id : SV_DispatchThreadID)
+{
+    //Calculate our current index value for indexing into 
+    int i = id.x * resolution2 + id.y * resolution + id.z;
+    
+    if (//If current voxel is empty
+        voxels[i].solid == 0 && 
+        //and voxel below is solid
+        voxels[i - resolution].solid == 1 && 
+        //and voxel below that is also solid, this ensures material doesnt spread mid air and falls down
+        voxels[i - (2 * resolution)].solid == 1 && 
+        //and we have grid space
+        id.y >= yGradient)
+    {
+        //Check positive X axis.
+        if (//If the voxel at (x + xZGradient, y - yGradient, z) is empty where x, y, z are our coords
+            voxels[i + (resolution2 * xZGradient) - (yGradient * resolution)].solid == 0 && 
+            //and we have enough grid space
+            id.x < resolution - xZGradient)
+        {
+            //Move the "soil" from the voxel beneath us to the voxel we just checked.
+            voxels[i - resolution].solid = 0;
+            voxels[i + (resolution2 * xZGradient) - (yGradient * resolution)].solid = 1;
+            //Set the update flag so the change is rendered
+            UpdateAdjacentVoxels(i - resolution);
+            UpdateAdjacentVoxels(i + (resolution2 * xZGradient) - (yGradient * resolution));
+        }
+        //Same thing but checks on the negative X axis.
+        else if (voxels[i - (resolution2 * xZGradient) - (yGradient * resolution)].solid == 0 && id.x > xZGradient)
+        {
+            voxels[i - resolution].solid = 0;
+            voxels[i - (resolution2 * xZGradient) - (yGradient * resolution)].solid = 1;
+            
+            UpdateAdjacentVoxels(i - resolution);
+            UpdateAdjacentVoxels(i - (resolution2 * xZGradient) - (yGradient * resolution));
+        }
+        //Positive z axis
+        else if (voxels[i + xZGradient - (yGradient * resolution)].solid == 0 && id.z < resolution - xZGradient)
+        {
+            voxels[i - resolution].solid = 0;
+            voxels[i + xZGradient - (yGradient * resolution)].solid = 1;
+            
+            UpdateAdjacentVoxels(i - resolution);
+            UpdateAdjacentVoxels(i + xZGradient - (yGradient * resolution));
+        }
+        //Negative z axis
+        else if (voxels[i - xZGradient - (yGradient * resolution)].solid == 0 && id.z > xZGradient)
+        {
+            voxels[i - resolution].solid = 0;
+            voxels[i - xZGradient - (yGradient * resolution)].solid = 1;
+            
+            UpdateAdjacentVoxels(i - resolution);
+            UpdateAdjacentVoxels(i - xZGradient - (yGradient * resolution));
+        }
+    }
+}
