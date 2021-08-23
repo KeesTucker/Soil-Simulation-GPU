@@ -41,11 +41,19 @@ public class VoxelComputeController : MonoBehaviour
         public int indicy;
     }
 
+    struct Vert
+    {
+        public Vector4 position;
+        public Vector3 normal;
+        public int references;
+        public int indicy;
+    };
+
     //Holds status for each voxel
     private ComputeBuffer voxelBuffer;
     //Holds mesh data
     private ComputeBuffer vertBuffer;
-    private ComputeBuffer unorderedVertBuffer;
+    private ComputeBuffer triBuffer;
     //Args to pass to DrawIndirect()
     private ComputeBuffer drawArgsBuffer;
     //Args to pass to compute shaders
@@ -105,8 +113,8 @@ public class VoxelComputeController : MonoBehaviour
             /*position of this vert in vert array*/ sizeof(int));
 
         //Create a buffer of verts
-        vertBuffer = new ComputeBuffer(NUM_VERTS_IN_MESH, sizeof(float) * NUM_FLOATS_PER_VERT, ComputeBufferType.Counter);
-        unorderedVertBuffer = new ComputeBuffer(NUM_VERTS_IN_MESH, sizeof(float) * NUM_FLOATS_PER_VERT, ComputeBufferType.Append);
+        vertBuffer = new ComputeBuffer(NUM_VERTS_IN_MESH, sizeof(float) * NUM_FLOATS_PER_VERT + sizeof(int) * 2, ComputeBufferType.Counter);
+        triBuffer = new ComputeBuffer(NUM_VERTS_IN_MESH, sizeof(int), ComputeBufferType.Append);
 
         //Create buffers for tables
         tablesBuffer = new ComputeBuffer(8 + 24 + 25 + 27, sizeof(float));
@@ -127,6 +135,7 @@ public class VoxelComputeController : MonoBehaviour
                     v.update = 1;
                     v.density = 0;
                     v.position = new Vector4(0, 0, 0, 0);
+                    v.indicy = -1;
                     if (y > groundHeight)
                     {
                         v.solid = 0;
@@ -140,6 +149,18 @@ public class VoxelComputeController : MonoBehaviour
             }
         }
         voxelBuffer.SetData(voxelInit);
+
+        Vert[] vertInit = new Vert[NUM_VERTS_IN_MESH];
+        for (int i = 0; i < NUM_VERTS_IN_MESH; i++)
+        {
+            Vert vert;
+            vert.position = new Vector4(0, 0, 0, -1f);
+            vert.normal = Vector3.zero;
+            vert.indicy = -1;
+            vert.references = 0;
+            vertInit[i] = vert;
+        }
+        vertBuffer.SetData(vertInit);
 
         tablesBuffer.SetData(LookupTables.GetTables(RESOLUTION));
 
@@ -187,20 +208,19 @@ public class VoxelComputeController : MonoBehaviour
 
     void OnRenderObject()
     {
-        //drawBufferMat.SetBuffer("vertBuffer", unorderedVertBuffer);
         drawBufferMat.SetBuffer("vertBuffer", vertBuffer);
+        drawBufferMat.SetBuffer("triBuffer", triBuffer);
         drawBufferMat.SetPass(0);
 
-        //ComputeBuffer.CopyCount(vertBuffer, drawArgsBuffer, 0);
-
-        //Graphics.DrawProceduralIndirectNow(MeshTopology.Triangles, drawArgsBuffer, 0);
-        Graphics.DrawProceduralNow(MeshTopology.Triangles, NUM_VERTS_IN_MESH);
+        ComputeBuffer.CopyCount(vertBuffer, drawArgsBuffer, 0);
+        
+        Graphics.DrawProceduralIndirectNow(MeshTopology.Triangles, drawArgsBuffer, 0);
     }
 
     void OnDestroy()
     {
         vertBuffer.Release();
-        unorderedVertBuffer.Release();
+        triBuffer.Release();
         voxelBuffer.Release();
         tablesBuffer.Release();
         drawArgsBuffer.Release();
@@ -322,8 +342,8 @@ public class VoxelComputeController : MonoBehaviour
 
     private void UpdateMesh(int updateAll)
     {
-        unorderedVertBuffer.SetCounterValue(0);
         vertBuffer.SetCounterValue(0);
+        triBuffer.SetCounterValue(0);
 
         meshCompute.SetInt("resolution", RESOLUTION);
         meshCompute.SetInt("resolution2", RESOLUTION * RESOLUTION);
@@ -336,7 +356,7 @@ public class VoxelComputeController : MonoBehaviour
         meshStripCompute.SetInt("resolution", RESOLUTION);
         meshStripCompute.SetInt("resolution2", RESOLUTION * RESOLUTION);
         meshStripCompute.SetBuffer(0, "verts", vertBuffer);
-        meshStripCompute.SetBuffer(0, "unorderedVerts", unorderedVertBuffer);
+        meshStripCompute.SetBuffer(0, "tris", triBuffer);
         meshStripCompute.Dispatch(0, RESOLUTION / 8, RESOLUTION / 8, RESOLUTION / 8);
     }
 }

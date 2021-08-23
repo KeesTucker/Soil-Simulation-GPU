@@ -87,6 +87,8 @@ Shader "Soil" {
 					{
 						float4 position;
 						float3 normal;
+						int references;
+						int indicy;
 					};
 
 					struct Varyings {
@@ -110,6 +112,7 @@ Shader "Soil" {
 					};
 
 					uniform StructuredBuffer<Vert> vertBuffer;
+					uniform StructuredBuffer<int> triBuffer;
 
 					// Automatically defined with SurfaceInput.hlsl
 					//TEXTURE2D(_BaseMap);
@@ -133,7 +136,7 @@ Shader "Soil" {
 
 					Varyings vert(uint id : SV_VertexID) {
 						Varyings OUT;
-						Vert vertData = vertBuffer[id];
+						Vert vertData = vertBuffer[triBuffer[id]];
 						VertexPositionInputs positionInputs = GetVertexPositionInputs(vertData.position.xyz);
 						OUT.positionCS = positionInputs.positionCS;
 

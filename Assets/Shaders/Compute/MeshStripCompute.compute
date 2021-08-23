@@ -1,40 +1,59 @@
 #pragma kernel CSMain
 
 int resolution;
-
+//Resolution squared
 int resolution2;
 
+//Struct to hold vert data
 struct Vert
 {
     float4 position;
     float3 normal;
+    int references;
+    int indicy;
 };
 
+/*Just a temporary struct so that complete tris get added to the append buffer at 
+the same time instead of getting jumbled up due to parrallism*/
 struct Tri
 {
-    Vert a;
-    Vert b;
-    Vert c;
+    int a;
+    int b;
+    int c;
 };
 
-struct Quad
-{
-    Tri topLeft;
-    Tri bottomRight;
-};
-
-RWStructuredBuffer<Quad> verts;
-AppendStructuredBuffer<Quad> unorderedVerts;
+//Fixed size vert buffer (readonly) its just RW because we use it to keep track of how many verts are to be rendered
+RWStructuredBuffer<Vert> verts;
+//Buffer to add indicies to
+AppendStructuredBuffer<Tri> tris;
 
 [numthreads(8, 8, 8)]
 void CSMain(int3 id : SV_DispatchThreadID)
 {
+    //Get index
     int o = id.x * resolution2 + id.y * resolution + id.z;
+
+    //Cycle through all faces for this index point
     for (uint i = 0; i < 6; i++)
     {
-        if (verts[o * 6 + i].bottomRight.a.position.w != -1.0)
+        //Check if this face is to be rendered
+        if (verts[(o * 6 + i) * 6].indicy != -1)
         {
-            unorderedVerts.Append(verts[o * 6 + i]);
+            //If so create a tri and fill it with the corresponding indicies
+            Tri tri;
+            tri.a = verts[(o * 6 + i) * 6].indicy;
+            tri.b = verts[(o * 6 + i) * 6 + 1].indicy;
+            tri.c = verts[(o * 6 + i) * 6 + 2].indicy;
+            //Throw it on the stack
+            tris.Append(tri);
+            
+            //Do it again :D
+            tri.a = verts[(o * 6 + i) * 6 + 3].indicy;
+            tri.b = verts[(o * 6 + i) * 6 + 4].indicy;
+            tri.c = verts[(o * 6 + i) * 6 + 5].indicy;
+            tris.Append(tri);
+            
+            //Keep track of how many valid verts we have so we can render the correct amount in DrawProceduralIndirectNow()
             verts.IncrementCounter();
             verts.IncrementCounter();
             verts.IncrementCounter();

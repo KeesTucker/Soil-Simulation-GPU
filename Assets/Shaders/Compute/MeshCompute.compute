@@ -1,11 +1,13 @@
 ﻿#pragma kernel CSMain
 
 int resolution;
-
+//Resolution squared
 int resolution2;
 
+//Update all voxels flag
 int updateAll;
 
+//Struct to hold voxel data
 struct Voxel
 {
     int update;
@@ -15,16 +17,21 @@ struct Voxel
     int indicy;
 };
 
+//Fixed size buffer for all voxels
 RWStructuredBuffer<Voxel> voxels;
-
+//Lookup tables
 StructuredBuffer<float> tables;
 
+//Struct to hold vert data
 struct Vert
 {
     float4 position;
     float3 normal;
+    int references;
+    int indicy;
 };
 
+//Fixed size buffer for verts
 RWStructuredBuffer<Vert> verts;
 
 float3 NormalFromEdges(float3 x, float3 y, float3 z)
@@ -38,72 +45,143 @@ float3 NormalFromEdges(float3 x, float3 y, float3 z)
     return n;
 }
 
-void AddQuad(int i, int aCoord, int bCoord, int cCoord, int dCoord)
-{
-    Vert aVert;
-    Vert bVert;
-    Vert cVert;
-    Vert dVert;
-    
-    float3 a = voxels[aCoord].position.xyz;
-    float3 b = voxels[bCoord].position.xyz;
-    float3 c = voxels[cCoord].position.xyz;
-    float3 d = voxels[dCoord].position.xyz;
-    
-    aVert.position = float4(a, 1.0);
-    bVert.position = float4(b, 1.0);
-    cVert.position = float4(c, 1.0);
-    dVert.position = float4(d, 1.0);
-    
-    float3 normalA = NormalFromEdges(a, b, d);
-    float3 normalB = NormalFromEdges(b, c, a);
-    float3 normalC = NormalFromEdges(c, d, b);
-    float3 normalD = NormalFromEdges(d, a, c);
-    
-    aVert.normal = normalA;
-    bVert.normal = normalB;
-    cVert.normal = normalC;
-    dVert.normal = normalD;
-    
-    verts[i] = aVert;
-    verts[i + 1] = bVert;
-    verts[i + 2] = cVert;
-    verts[i + 3] = cVert;
-    verts[i + 4] = dVert;
-    verts[i + 5] = aVert;
+void AddVert(int i, int voxelCoord, float3 position, float3 normal){
+    if (verts[i].indicy == -1) //If currently no vert here
+    {
+        //Check if we have a parent
+        if (voxels[voxelCoord].indicy == -1) //We have no parent
+        {
+            voxels[voxelCoord].indicy = i; //Set this vert to parent vert
+        
+            //Create a vert
+            Vert vert;
+            vert.position = float4(position, 1.0);
+            vert.normal = normal;
+            vert.references = 1;
+            vert.indicy = i;
+            verts[i] = vert;
+        }
+        else //If we are a child
+        {
+            int indicy = voxels[voxelCoord].indicy; //Set our indicy to that of our parent
+            verts[indicy].position = float4(position, 1.0); //Update position
+            //Recalculate Normals
+            if (verts[indicy].references > 0)
+            {
+                verts[indicy].normal = (verts[indicy].normal * verts[indicy].references + normal) / (verts[indicy].references + 1);
+            }
+            else
+            {
+                verts[indicy].normal = normal;
+            }
+            verts[indicy].references++; //Add 1 to the references
+        
+            //Create a placeholder vert
+            Vert vert;
+            vert.position = float4(position, 1.0);
+            vert.normal = normal;
+            vert.references = 1;
+            vert.indicy = indicy;
+            verts[i] = vert;
+        }
+    }
 }
 
-void ResetQuad(int i)
+void ResetVert(int i, int voxelCoord)
 {
-    Vert vert;
-    vert.position = float4(0, 0, 0, -1.0);
-    vert.normal = float3(0, 0, 0);
+    if (verts[i].indicy != -1) //If there is a vert here
+    {
+        if (verts[i].references == 1) //If this vert has no children
+        {
+            if (verts[i].indicy != voxels[voxelCoord].indicy) //If this is a child vert
+            {
+                //Recalculate normals, this is slightly broken but it works for now
+                if (verts[voxels[voxelCoord].indicy].references > 1)
+                {
+                    verts[voxels[voxelCoord].indicy].normal = (verts[voxels[voxelCoord].indicy].normal * verts[voxels[voxelCoord].indicy].references - verts[i].normal) / (verts[voxels[voxelCoord].indicy].references - 1);
+                }
+                else
+                {
+                    verts[voxels[voxelCoord].indicy].normal = 0;
+                }
+                verts[voxels[voxelCoord].indicy].references--; //Subtract 1 from parent's references count as we no longer exist
+            }
+            verts[i].references = 0;
+        }
+        else //This vert is a parent and has children
+        {
+            //Recalculate normals, this is slightly broken but it works for now
+            if (verts[voxels[voxelCoord].indicy].references > 1)
+            {
+                verts[voxels[voxelCoord].indicy].normal = (verts[voxels[voxelCoord].indicy].normal * verts[voxels[voxelCoord].indicy].references - verts[i].normal) / (verts[voxels[voxelCoord].indicy].references - 1);
+            }
+            else
+            {
+                verts[voxels[voxelCoord].indicy].normal = 0;
+            }
+            verts[i].references--; //Subtract 1 from our references count as we no longer exist
+        }
+        
+        verts[i].indicy = -1; //Stop this vert from being rendered
+    }
+}
+
+void UpdateQuad(int i, int aCoord, int bCoord, int cCoord, int dCoord, bool add)
+{
+    if (add)
+    {
+        float3 posA = voxels[aCoord].position.xyz;
+        float3 posB = voxels[bCoord].position.xyz;
+        float3 posC = voxels[cCoord].position.xyz;
+        float3 posD = voxels[dCoord].position.xyz;
     
-    verts[i] = vert;
-    verts[i + 1] = vert;
-    verts[i + 2] = vert;
-    verts[i + 3] = vert;
-    verts[i + 4] = vert;
-    verts[i + 5] = vert;
+        float3 normalA = NormalFromEdges(posA, posB, posD);
+        float3 normalB = NormalFromEdges(posB, posC, posA);
+        float3 normalC = NormalFromEdges(posC, posD, posB);
+        float3 normalD = NormalFromEdges(posD, posA, posC);
+        
+        AddVert(i, aCoord, posA, normalA);
+        AddVert(i + 1, bCoord, posB, normalB);
+        AddVert(i + 2, cCoord, posC, normalC);
+        AddVert(i + 3, cCoord, posC, normalC);
+        AddVert(i + 4, dCoord, posD, normalD);
+        AddVert(i + 5, aCoord, posA, normalA);
+    }
+    else
+    {
+        ResetVert(i, aCoord);
+        ResetVert(i + 1, bCoord);
+        ResetVert(i + 2, cCoord);
+        ResetVert(i + 3, cCoord);
+        ResetVert(i + 4, dCoord);
+        ResetVert(i + 5, aCoord);
+    }
 }
 
 [numthreads(8, 8, 8)]
 void CSMain(int3 id : SV_DispatchThreadID)
 {
+    //Get index
     int o = (id.x + 1) * resolution2 + (id.y + 1) * resolution + (id.z + 1);
+    //If ready for an update
     if (voxels[o].update == 1 || updateAll == 1)
     {
+        //offset index as verts are offset due to there being 1 less per row
         o -= resolution2 + resolution + 1;
+        //Check to make sure we will stay within grid
         if (id.x < resolution - 2 && id.y < resolution - 2 && id.z < resolution - 2)
         {
+            //Cycle through all faces
             for (uint i = 0; i < 6; i++)
             {
+                //Get index offsets for each vertex from the lookup tables
                 int connectionIndex = i * 4 + 8;
                 int aCoord = o + tables[tables[connectionIndex]];
                 int bCoord = o + tables[tables[connectionIndex + 1]];
                 int cCoord = o + tables[tables[connectionIndex + 2]];
                 int dCoord = o + tables[tables[connectionIndex + 3]];
             
+                //Flip it and do the same for the opposite face
                 int iInverse;
                 if (i % 2 == 0)
                 {
@@ -120,6 +198,9 @@ void CSMain(int3 id : SV_DispatchThreadID)
                 int cCoordInverse = o + tables[tables[connectionIndex + 2]];
                 int dCoordInverse = o + tables[tables[connectionIndex + 3]];
             
+                //Bool to keep track of whether this will be removal or addition of a face
+                bool add;
+                //Check if face is pointing out of the object and all verticies are valid
                 if (voxels[aCoord].position.w == 1.0 &&
                 voxels[bCoord].position.w == 1.0 &&
                 voxels[cCoord].position.w == 1.0 &&
@@ -129,14 +210,19 @@ void CSMain(int3 id : SV_DispatchThreadID)
                 voxels[cCoordInverse].position.w == 0 ||
                 voxels[dCoordInverse].position.w == 0))
                 {
-                    AddQuad((o * 6 + i) * 6, aCoord, bCoord, cCoord, dCoord);
+                    //If yes add a face
+                    add = true;
                 }
                 else
                 {
-                    ResetQuad((o * 6 + i) * 6);
+                    //If no remove one
+                    add = false;
                 }
+                //Actually perform the operation on the mesh
+                UpdateQuad((o * 6 + i) * 6, aCoord, bCoord, cCoord, dCoord, add);
             }
         }
+        //Turn the update flag off for this voxel
         voxels[o].update = 0;
     }
 }
