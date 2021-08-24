@@ -46,7 +46,7 @@ float3 NormalFromEdges(float3 x, float3 y, float3 z)
 }
 
 void AddVert(int i, int voxelCoord, float3 position, float3 normal){
-    if (verts[i].indicy == -1) //If currently no vert here
+    if (verts[i].indicy == -1 || updateAll == 1 || true) //If currently no vert here
     {
         //Check if we have a parent
         if (voxels[voxelCoord].indicy == -1) //We have no parent
@@ -121,7 +121,6 @@ void ResetVert(int i, int voxelCoord)
             }
             verts[i].references--; //Subtract 1 from our references count as we no longer exist
         }
-        
         verts[i].indicy = -1; //Stop this vert from being rendered
     }
 }
@@ -198,8 +197,6 @@ void CSMain(int3 id : SV_DispatchThreadID)
                 int cCoordInverse = o + tables[tables[connectionIndex + 2]];
                 int dCoordInverse = o + tables[tables[connectionIndex + 3]];
             
-                //Bool to keep track of whether this will be removal or addition of a face
-                bool add;
                 //Check if face is pointing out of the object and all verticies are valid
                 if (voxels[aCoord].position.w == 1.0 &&
                 voxels[bCoord].position.w == 1.0 &&
@@ -211,15 +208,13 @@ void CSMain(int3 id : SV_DispatchThreadID)
                 voxels[dCoordInverse].position.w == 0))
                 {
                     //If yes add a face
-                    add = true;
+                    UpdateQuad((o * 6 + i) * 6, aCoord, bCoord, cCoord, dCoord, true);
                 }
                 else
                 {
-                    //If no remove one
-                    add = false;
+                    //If no remove a face
+                    UpdateQuad((o * 6 + i) * 6, aCoord, bCoord, cCoord, dCoord, false);
                 }
-                //Actually perform the operation on the mesh
-                UpdateQuad((o * 6 + i) * 6, aCoord, bCoord, cCoord, dCoord, add);
             }
         }
         //Turn the update flag off for this voxel

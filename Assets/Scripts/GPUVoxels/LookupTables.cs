@@ -23,11 +23,11 @@ public static class LookupTables
                 0, 3, 6, 2, //x face down
                 7, 5, 1, 4, //x face up
                 //Smoothing values for offsetting verticies depending on the surrounding geometry
-                0, 0.33f, 0.5f, 0, 0,
-                -0.33f, 0, 0, 0, 0,
-                -0.5f, 0, 0, 0, 0,
-                0, 0, 0, 0, -0.33f,
-                0, 0, 0, 0.33f, 0,
+                0,      0.33f,  0.5f,   0,      0,
+                -0.33f, 0,      0,      0,      0,
+                -0.5f,  0,      0,      0,      0,
+                0,      0,      0,      0,      -0.33f,
+                0,      0,      0,      0.33f,  0,
                 //Coordinates for adjacent voxels
                 -res2 + -res1 + -1,
                 -res2 + -res1,

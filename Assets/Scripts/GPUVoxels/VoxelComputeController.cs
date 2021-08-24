@@ -201,7 +201,7 @@ public class VoxelComputeController : MonoBehaviour
                     tablesBuffer.SetData(LookupTables.GetTables(RESOLUTION));
                 }
             }
-            
+
             UpdateEverything(1);
         }
     }
