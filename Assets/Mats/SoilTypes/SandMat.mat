@@ -21,7 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: SandMat
-  m_Shader: {fileID: 4800000, guid: 217bcf2f6ed78274d93c9f7cfcdaadd4, type: 3}
+  m_Shader: {fileID: 4800000, guid: 26210006cdad0084bad8b8a9988e44b6, type: 3}
   m_ShaderKeywords: _NORMALMAP
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -37,11 +37,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: 49d35c857010fe74a9574203adb3ffd8, type: 3}
+        m_Texture: {fileID: 2800000, guid: f972399d12a6d2149a48cf4c9700805e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 291795b91be9cd342b7efee28c3ec06e, type: 3}
+        m_Texture: {fileID: 2800000, guid: fac959014efe62f46bab8c3d67f486b1, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -76,6 +76,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _PBRMap:
+        m_Texture: {fileID: 2800000, guid: 1e2bb99d6ffb9f5479227f87fc036886, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -104,7 +108,7 @@ Material:
     m_Floats:
     - _AlphaClip: 0
     - _Blend: 0
-    - _BumpScale: 2.38
+    - _BumpScale: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
     - _Cull: 2

@@ -2,8 +2,11 @@
 
 int resolution;
 int resolution2;
+//Radius of voxels to check around each point to calculate density
 int weightingRadius;
+//Diameter of the above, cuts down on calculations
 int diameter;
+//Sqr of the above, ditto
 int sqrWeightingRadius;
 int updateAll;
 
@@ -25,21 +28,25 @@ void CSMain(int3 id : SV_DispatchThreadID)
 {
     int o = id.x * resolution2 + id.y * resolution + id.z;
     
+    //If this voxel has been modified recently
     if (voxels[o].update == 1 || updateAll == 1)
     {
         voxels[o].density = -1;
         
+        //Iterate through all adjacent verticies
         for (int i = 0; i < 27; i++)
         {
+            //If any of these surrounding voxels are solid
             if (voxels[o + tables[57 + i]].solid == 1)
             {
+                //Make sure our sphere is centered on our point
                 int xAreaStart = max(id.x - weightingRadius, 0);
                 int yAreaStart = max(id.y - weightingRadius, 0);
                 int zAreaStart = max(id.z - weightingRadius, 0);
 
                 int totalCellCount = 0;
                 int solidCellCount = 0;
-    
+                //Iterate through a sphere of voxels around our point
                 for (int x = xAreaStart; x < min(xAreaStart + diameter, resolution); x++)
                 {
                     for (int y = yAreaStart; y < min(yAreaStart + diameter, resolution); y++)
@@ -50,8 +57,10 @@ void CSMain(int3 id : SV_DispatchThreadID)
                             int yDistance = y - id.y;
                             int zDistance = z - id.z;
                             float sqrDistance = xDistance * xDistance + yDistance * yDistance + zDistance * zDistance;
+                            //Make sure its within the radius
                             if (sqrDistance < sqrWeightingRadius)
                             {
+                                //If solid increase the solid cell count. Always increase the total cell count.
                                 if (voxels[x * resolution2 + y * resolution + z].solid == 1)
                                 {
                                     solidCellCount++;
@@ -61,6 +70,7 @@ void CSMain(int3 id : SV_DispatchThreadID)
                         }
                     }
                 }
+                //Check for / 0 error, then calculate percentage of solid cells and assign to density
                 if (totalCellCount != 0)
                 {
                     voxels[o].density = (float) solidCellCount / (float) totalCellCount;
@@ -69,6 +79,7 @@ void CSMain(int3 id : SV_DispatchThreadID)
                 {
                     voxels[o].density = 0;
                 }
+                //Make sure this only ever runs once
                 break;
             }
         }

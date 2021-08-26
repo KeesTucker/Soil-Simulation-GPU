@@ -5,7 +5,7 @@ public static class LookupTables
         int res1 = resolution;
         int res2 = resolution * resolution;
 
-        return new float[8 + 24 + 25 + 27] {
+        return new float[8 + 24 + 25 + 27 + 1] {
                 //Coordinates for drawing quads
                 0, //o
                 res2, //x
@@ -23,11 +23,11 @@ public static class LookupTables
                 0, 3, 6, 2, //x face down
                 7, 5, 1, 4, //x face up
                 //Smoothing values for offsetting verticies depending on the surrounding geometry
-                0,      0.33f,  0.5f,   0,      0,
+                0,      0.33f,  0.33f,  0,      0,
                 -0.33f, 0,      0,      0,      0,
-                -0.5f,  0,      0,      0,      0,
+                -0.33f, 0,      0,      0,      -0.33f,
                 0,      0,      0,      0,      -0.33f,
-                0,      0,      0,      0.33f,  0,
+                0,      0,      0.33f,  0.33f,  0,
                 //Coordinates for adjacent voxels
                 -res2 + -res1 + -1,
                 -res2 + -res1,
@@ -55,7 +55,9 @@ public static class LookupTables
                 res2 + 1,
                 res2 + res1 + -1,
                 res2 + res1,
-                res2 + res1 + 1
+                res2 + res1 + 1,
+                //Refreshed flag
+                0
         };
     }
 }

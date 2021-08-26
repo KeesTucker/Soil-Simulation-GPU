@@ -27,7 +27,6 @@ struct Vert
 {
     float4 position;
     float3 normal;
-    int references;
     int indicy;
 };
 
@@ -46,7 +45,8 @@ float3 NormalFromEdges(float3 x, float3 y, float3 z)
 }
 
 void AddVert(int i, int voxelCoord, float3 position, float3 normal){
-    if (verts[i].indicy == -1 || updateAll == 1 || true) //If currently no vert here
+    //This first if could possible be deleted, its a bit glitchy
+    if (true)//verts[i].indicy == -1 || updateAll == 1) //If currently no vert here
     {
         //Check if we have a parent
         if (voxels[voxelCoord].indicy == -1) //We have no parent
@@ -57,7 +57,6 @@ void AddVert(int i, int voxelCoord, float3 position, float3 normal){
             Vert vert;
             vert.position = float4(position, 1.0);
             vert.normal = normal;
-            vert.references = 1;
             vert.indicy = i;
             verts[i] = vert;
         }
@@ -66,21 +65,12 @@ void AddVert(int i, int voxelCoord, float3 position, float3 normal){
             int indicy = voxels[voxelCoord].indicy; //Set our indicy to that of our parent
             verts[indicy].position = float4(position, 1.0); //Update position
             //Recalculate Normals
-            if (verts[indicy].references > 0)
-            {
-                verts[indicy].normal = (verts[indicy].normal * verts[indicy].references + normal) / (verts[indicy].references + 1);
-            }
-            else
-            {
-                verts[indicy].normal = normal;
-            }
-            verts[indicy].references++; //Add 1 to the references
+            verts[indicy].normal = normalize(verts[indicy].normal + normal);
         
             //Create a placeholder vert
             Vert vert;
             vert.position = float4(position, 1.0);
             vert.normal = normal;
-            vert.references = 1;
             vert.indicy = indicy;
             verts[i] = vert;
         }
@@ -91,36 +81,6 @@ void ResetVert(int i, int voxelCoord)
 {
     if (verts[i].indicy != -1) //If there is a vert here
     {
-        if (verts[i].references == 1) //If this vert has no children
-        {
-            if (verts[i].indicy != voxels[voxelCoord].indicy) //If this is a child vert
-            {
-                //Recalculate normals, this is slightly broken but it works for now
-                if (verts[voxels[voxelCoord].indicy].references > 1)
-                {
-                    verts[voxels[voxelCoord].indicy].normal = (verts[voxels[voxelCoord].indicy].normal * verts[voxels[voxelCoord].indicy].references - verts[i].normal) / (verts[voxels[voxelCoord].indicy].references - 1);
-                }
-                else
-                {
-                    verts[voxels[voxelCoord].indicy].normal = 0;
-                }
-                verts[voxels[voxelCoord].indicy].references--; //Subtract 1 from parent's references count as we no longer exist
-            }
-            verts[i].references = 0;
-        }
-        else //This vert is a parent and has children
-        {
-            //Recalculate normals, this is slightly broken but it works for now
-            if (verts[voxels[voxelCoord].indicy].references > 1)
-            {
-                verts[voxels[voxelCoord].indicy].normal = (verts[voxels[voxelCoord].indicy].normal * verts[voxels[voxelCoord].indicy].references - verts[i].normal) / (verts[voxels[voxelCoord].indicy].references - 1);
-            }
-            else
-            {
-                verts[voxels[voxelCoord].indicy].normal = 0;
-            }
-            verts[i].references--; //Subtract 1 from our references count as we no longer exist
-        }
         verts[i].indicy = -1; //Stop this vert from being rendered
     }
 }

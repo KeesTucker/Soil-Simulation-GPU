@@ -8,7 +8,7 @@ int resolution2;
 //How fast voxels fall
 int fallRate;
 
-StructuredBuffer<float> tables;
+RWStructuredBuffer<float> tables;
 
 //Standard voxel struct for the voxels buffer
 struct Voxel
@@ -35,6 +35,8 @@ void UpdateAdjacentVoxels(int o)
     }
 }
 
+int refreshed = 0;
+
 [numthreads(8, 8, 8)]
 void CSMain(int3 id : SV_DispatchThreadID)
 {
@@ -44,8 +46,8 @@ void CSMain(int3 id : SV_DispatchThreadID)
     int distanceUp;
     int distanceDown;
     
-    //If current voxel is solid and the one below it is empty and it is safe
-    if (voxels[i].solid == 1 && voxels[i - resolution].solid == 0 && id.y > 0)
+    //If current voxel is solid and the one below it is empty and we are within bounds
+    if (voxels[i].solid == 1 && voxels[i - resolution].solid == 0 && id.y > 2)
     {
         //Iterate upwards until we find empty voxels again, this gived us our "distanceUp"
         for (distanceUp = 0; id.y + distanceUp <= resolution; distanceUp++)
@@ -58,7 +60,7 @@ void CSMain(int3 id : SV_DispatchThreadID)
         //Do the same except iterate downwards untill solid voxels are found. Constrain distanceDown to fallrate so voxel can only fall at that rate.
         for (int distanceDown = 1; distanceDown <= fallRate; distanceDown++)
         {
-            if (voxels[i - (distanceDown - 1) * resolution].solid == 1 || id.y - distanceDown <= 0)
+            if (voxels[i - (distanceDown - 1) * resolution].solid == 1 || id.y - distanceDown - 1 <= 0)
             {
                 break;
             }
@@ -76,5 +78,6 @@ void CSMain(int3 id : SV_DispatchThreadID)
                 UpdateAdjacentVoxels((i + u * resolution) - (distanceDown * resolution));
             }
         }
+        tables[84] = 1;
     }
 }

@@ -1,9 +1,9 @@
 {
     "m_SelectedDeviceId": "1PASH9A80F0033",
     "m_SelectedPackage": {
-        "deviceId": "1PASH9A80F0033",
-        "name": "com.KeesTucker.OculusSoilPrototype",
-        "processId": 14026,
+        "deviceId": "",
+        "name": "",
+        "processId": 0,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -34,50 +34,44 @@
         },
         {
             "deviceId": "1PASH9A80F0033",
-            "name": "com.KeesTucker.OculusSoilPrototype",
-            "processId": 14909,
+            "name": "com.KeesTucker.OculusSoil",
+            "processId": 31577,
             "exited": true
         },
         {
             "deviceId": "1PASH9A80F0033",
-            "name": "com.KeesTucker.OculusSoilPrototype",
-            "processId": 3566,
+            "name": "com.KeesTucker.OculusSoil",
+            "processId": 31878,
             "exited": true
         },
         {
             "deviceId": "1PASH9A80F0033",
-            "name": "com.KeesTucker.OculusSoilPrototype",
-            "processId": 3881,
+            "name": "com.KeesTucker.OculusSoil",
+            "processId": 2858,
             "exited": true
         },
         {
             "deviceId": "1PASH9A80F0033",
-            "name": "com.KeesTucker.OculusSoilPrototype",
-            "processId": 9289,
+            "name": "com.KeesTucker.OculusSoil",
+            "processId": 4360,
             "exited": true
         },
         {
             "deviceId": "1PASH9A80F0033",
-            "name": "com.KeesTucker.OculusSoilPrototype",
-            "processId": 11154,
+            "name": "com.KeesTucker.OculusSoil",
+            "processId": 4780,
             "exited": true
         },
         {
             "deviceId": "1PASH9A80F0033",
-            "name": "com.KeesTucker.OculusSoilPrototype",
-            "processId": 12199,
+            "name": "com.oculus.xrstreamingclient",
+            "processId": 2035,
             "exited": false
         },
         {
             "deviceId": "1PASH9A80F0033",
-            "name": "com.KeesTucker.OculusSoilPrototype",
-            "processId": 13093,
-            "exited": false
-        },
-        {
-            "deviceId": "1PASH9A80F0033",
-            "name": "com.KeesTucker.OculusSoilPrototype",
-            "processId": 14026,
+            "name": "com.oculus.os.clearactivity",
+            "processId": 9488,
             "exited": false
         }
     ],

@@ -25,10 +25,12 @@ struct Voxel
     int indicy;
 };
 
-StructuredBuffer<float> tables;
+RWStructuredBuffer<float> tables;
 
 //Buffer to hold all our sexy voxel data <3
 RWStructuredBuffer<Voxel> voxels;
+
+int refreshed = 0;
 
 void UpdateAdjacentVoxels(int o)
 {
@@ -51,13 +53,13 @@ void CSMain(int3 id : SV_DispatchThreadID)
         //and voxel below that is also solid, this ensures material doesnt spread mid air and falls down
         voxels[i - (2 * resolution)].solid == 1 && 
         //and we have grid space
-        id.y >= yGradient)
+        id.y >= yGradient + 1)
     {
         //Check positive X axis.
-        if (//If the voxel at (x + xZGradient, y - yGradient, z) is empty where x, y, z are our coords
-            voxels[i + (resolution2 * xZGradient) - (yGradient * resolution)].solid == 0 && 
+        if ( //If the voxel at (x + xZGradient, y - yGradient, z) is empty where x, y, z are our coords
+            voxels[i + (resolution2 * xZGradient) - (yGradient * resolution)].solid == 0 &&
             //and we have enough grid space
-            id.x < resolution - xZGradient)
+            id.x < resolution - xZGradient - 2 && id.x > 2)
         {
             //Move the "soil" from the voxel beneath us to the voxel we just checked.
             voxels[i - resolution].solid = 0;
@@ -65,33 +67,41 @@ void CSMain(int3 id : SV_DispatchThreadID)
             //Set the update flag so the change is rendered
             UpdateAdjacentVoxels(i - resolution);
             UpdateAdjacentVoxels(i + (resolution2 * xZGradient) - (yGradient * resolution));
+            
+            tables[84] = 1;
         }
         //Same thing but checks on the negative X axis.
-        else if (voxels[i - (resolution2 * xZGradient) - (yGradient * resolution)].solid == 0 && id.x > xZGradient)
+        else if (voxels[i - (resolution2 * xZGradient) - (yGradient * resolution)].solid == 0 && id.x > xZGradient + 2 && id.x < resolution - 2)
         {
             voxels[i - resolution].solid = 0;
             voxels[i - (resolution2 * xZGradient) - (yGradient * resolution)].solid = 1;
             
             UpdateAdjacentVoxels(i - resolution);
             UpdateAdjacentVoxels(i - (resolution2 * xZGradient) - (yGradient * resolution));
+            
+            tables[84] = 1;
         }
         //Positive z axis
-        else if (voxels[i + xZGradient - (yGradient * resolution)].solid == 0 && id.z < resolution - xZGradient)
+        else if (voxels[i + xZGradient - (yGradient * resolution)].solid == 0 && id.z < resolution - xZGradient - 2 && id.z > 2)
         {
             voxels[i - resolution].solid = 0;
             voxels[i + xZGradient - (yGradient * resolution)].solid = 1;
             
             UpdateAdjacentVoxels(i - resolution);
             UpdateAdjacentVoxels(i + xZGradient - (yGradient * resolution));
+            
+            tables[84] = 1;
         }
         //Negative z axis
-        else if (voxels[i - xZGradient - (yGradient * resolution)].solid == 0 && id.z > xZGradient)
+        else if (voxels[i - xZGradient - (yGradient * resolution)].solid == 0 && id.z > xZGradient + 2 && id.z < resolution - 2)
         {
             voxels[i - resolution].solid = 0;
             voxels[i - xZGradient - (yGradient * resolution)].solid = 1;
             
             UpdateAdjacentVoxels(i - resolution);
             UpdateAdjacentVoxels(i - xZGradient - (yGradient * resolution));
+            
+            tables[84] = 1;
         }
     }
 }

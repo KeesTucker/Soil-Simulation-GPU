@@ -9,7 +9,6 @@ struct Vert
 {
     float4 position;
     float3 normal;
-    int references;
     int indicy;
 };
 

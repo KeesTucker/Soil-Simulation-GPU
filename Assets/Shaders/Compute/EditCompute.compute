@@ -51,14 +51,14 @@ void CSMain(int3 id : SV_DispatchThreadID)
     if (coord.x == id.x && coord.y == id.y && coord.z == id.z)
     {
         //Where to start looping from on each axis
-        int xAreaStart = max(id.x - radius, 0);
-        int yAreaStart = max(id.y - radius, 0);
-        int zAreaStart = max(id.z - radius, 0);
-        for (int x = xAreaStart; x < min(xAreaStart + diameter, resolution); x++)
+        int xAreaStart = max(id.x - radius, 2);
+        int yAreaStart = max(id.y - radius, 2);
+        int zAreaStart = max(id.z - radius, 2);
+        for (int x = xAreaStart; x < min(xAreaStart + diameter, resolution - 2); x++)
         {
-            for (int y = yAreaStart; y < min(yAreaStart + diameter, resolution); y++)
+            for (int y = yAreaStart; y < min(yAreaStart + diameter, resolution - 2); y++)
             {
-                for (int z = zAreaStart; z < min(zAreaStart + diameter, resolution); z++)
+                for (int z = zAreaStart; z < min(zAreaStart + diameter, resolution - 2); z++)
                 {
                     int xDistance = x - id.x;
                     int yDistance = y - id.y;
