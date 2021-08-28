@@ -218,7 +218,7 @@ namespace Obi
                     {
                         m_SceneStates.Add(new SceneStateCache { state = new SceneView.SceneViewState(s.sceneViewState), view = s });
                         s.sceneViewState.showFlares = false;
-                        s.sceneViewState.showMaterialUpdate = false;
+                        s.sceneViewState.alwaysRefresh = false;
                         s.sceneViewState.showFog = false;
                         s.sceneViewState.showSkybox = false;
                         s.sceneViewState.showImageEffects = false;
@@ -249,7 +249,7 @@ namespace Obi
 
                     state.view.sceneViewState.showFog = state.state.showFog;
                     state.view.sceneViewState.showFlares = state.state.showFlares;
-                    state.view.sceneViewState.showMaterialUpdate = state.state.showMaterialUpdate;
+                    state.view.sceneViewState.alwaysRefresh = state.state.alwaysRefresh;
                     state.view.sceneViewState.showSkybox = state.state.showSkybox;
                     state.view.sceneViewState.showImageEffects = state.state.showImageEffects;
                     state.view.sceneViewState.showParticleSystems = state.state.showParticleSystems;

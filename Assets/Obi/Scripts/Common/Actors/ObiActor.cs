@@ -281,7 +281,7 @@ namespace Obi
 #if UNITY_EDITOR
 
             // Check if this script's GameObject is in a PrefabStage
-            var prefabStage = UnityEditor.Experimental.SceneManagement.PrefabStageUtility.GetPrefabStage(gameObject);
+            var prefabStage = UnityEditor.SceneManagement.PrefabStageUtility.GetPrefabStage(gameObject);
 
             if (prefabStage != null)
             {
