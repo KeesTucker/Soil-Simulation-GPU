@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.17629305, g: 0.22064291, b: 0.3029654, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2657,7 +2657,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   render: 1
-  shader: {fileID: 4800000, guid: 801733041f66b49e1b3c2101471db877, type: 3}
+  shader: {fileID: 4800000, guid: 28641a0edd6e047c6af7e3c6b342c81a, type: 3}
   particleColor: {r: 0.9191176, g: 0.5514706, b: 0, a: 1}
   radiusScale: 0.7
 --- !u!114 &436830240
@@ -3939,6 +3939,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1137808983}
   - component: {fileID: 1137808982}
+  - component: {fileID: 1137808984}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -4023,6 +4024,26 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 64.952, y: -12.162001, z: -48.069004}
+--- !u!114 &1137808984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1137808981}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 1
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
 --- !u!1 &1755756124
 GameObject:
   m_ObjectHideFlags: 0
@@ -6512,7 +6533,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   render: 1
-  shader: {fileID: 4800000, guid: 801733041f66b49e1b3c2101471db877, type: 3}
+  shader: {fileID: 4800000, guid: 28641a0edd6e047c6af7e3c6b342c81a, type: 3}
   particleColor: {r: 0.079422556, g: 0.6132181, b: 0.8308824, a: 1}
   radiusScale: 0.7
 --- !u!114 &1762889369

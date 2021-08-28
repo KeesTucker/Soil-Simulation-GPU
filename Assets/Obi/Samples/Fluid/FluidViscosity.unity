@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.18357596, g: 0.2290978, b: 0.3054825, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1772,8 +1772,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8b45ebbf86be4df6b0e6cd933812af2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  render: 0
-  shader: {fileID: 4800000, guid: 801733041f66b49e1b3c2101471db877, type: 3}
+  render: 1
+  shader: {fileID: 4800000, guid: a8c46db5ccc10489cba075e7a9172ca6, type: 3}
   particleColor: {r: 1, g: 0.98357004, b: 0.4044118, a: 0.5019608}
   radiusScale: 1.7
 --- !u!1 &335578778
@@ -2109,7 +2109,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a161c4294214a4fbcb7e9e94800494, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cellSpans: {}
 --- !u!4 &466592724
 Transform:
   m_ObjectHideFlags: 0
@@ -2136,6 +2135,7 @@ GameObject:
   - component: {fileID: 1137808983}
   - component: {fileID: 1137808982}
   - component: {fileID: 1137808984}
+  - component: {fileID: 1137808985}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -2234,6 +2234,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   particleRenderers:
   - {fileID: 121966934}
+--- !u!114 &1137808985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1137808981}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 1
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
 --- !u!1001 &1592737018
 PrefabInstance:
   m_ObjectHideFlags: 0
