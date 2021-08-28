@@ -32,7 +32,7 @@ void UpdateAdjacentVoxels(int xCoord, int zCoord)
 [numthreads(8, 1, 8)]
 void CSMain(int3 id : SV_DispatchThreadID)
 {
-    if (coord.x == id.x && coord.z == id.z)
+    if ((int)coord.x == id.x && (int)coord.z == id.z)
     {
         int xAreaStart = max(id.x - radius, 0);
         int zAreaStart = max(id.z - radius, 0);
@@ -46,7 +46,15 @@ void CSMain(int3 id : SV_DispatchThreadID)
                 if (sqrDistance < sqrRadius)
                 {
                     int i = x * resolution + z;
-                    cells[i].height = (sqrRadius - sqrDistance);
+                    if (fillType == 1)
+                    {
+                        cells[i].height += sqrt(sqrRadius - sqrDistance) / 100;
+                    }
+                    else
+                    {
+                        cells[i].height -= sqrt(sqrRadius - sqrDistance) / 100;
+                    }
+                        
                     UpdateAdjacentVoxels(x, z);
                 }
             }

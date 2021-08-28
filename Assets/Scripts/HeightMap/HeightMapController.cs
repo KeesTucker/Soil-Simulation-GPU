@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -17,10 +18,8 @@ public class HeightMapController : MonoBehaviour
         public int indicy;
     };
 
-    const int RESOLUTION = 128;
+    const int RESOLUTION = 64;
     const int NUM_CELLS = RESOLUTION * RESOLUTION;
-
-    [SerializeField] private HeightmapCollisionController heightmapCollisionController;
 
     [SerializeField] private Material soilMat;
     [SerializeField] private Material shadowMat;
@@ -57,7 +56,22 @@ public class HeightMapController : MonoBehaviour
     [SerializeField] private int editRadius;
     private Vector3 edit = -Vector3.one;
 
-    void Start()
+    public bool runColInThread = false;
+    private Thread genColThread = null;
+    private int colMeshID;
+    private int updateCount = 0;
+    private EventWaitHandle waitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
+
+    private void Awake()
+    {
+        if (runColInThread)
+        {
+            genColThread = new Thread(BakePhysicsMesh);
+            genColThread.Start();
+        }
+    }
+
+    IEnumerator Start()
     {
         if (RESOLUTION % 8 != 0)
         {
@@ -130,29 +144,73 @@ public class HeightMapController : MonoBehaviour
         bounds.center = Vector3.zero;
         bounds.size = Vector3.one * size;
 
-        /*heightmapCollisionController.resolution = RESOLUTION;
-        heightmapCollisionController.cellSize = cellSize;
-        heightmapCollisionController.startHeight = startingHeight;
-        heightmapCollisionController.cellBuffer = cellBuffer;
-        heightmapCollisionController.Setup();*/
-
         colMesh = new Mesh();
         colMesh.SetVertices(verts);
         colMesh.SetTriangles(tris, 0);
         meshCollider.sharedMesh = colMesh;
+
+        yield return new WaitForSeconds(0.1f);
+        UpdateVerts(1);
+    }
+
+    private void BakePhysicsMesh()
+    {
+        while (true)
+        {
+            waitHandle.WaitOne();
+            Physics.BakeMesh(colMeshID, false);
+            waitHandle.Set();
+        }
     }
 
     void Update()
     {
-        UpdateVerts();
-        if (edit != -Vector3.one)
+        if (runColInThread)
         {
-            EditHeightMap();
-            edit = -Vector3.one;
+            if (updateCount == 0)
+            {
+                colMeshID = colMesh.GetInstanceID();
+                colMesh.SetVertices(verts);
+                colMesh.SetTriangles(tris, 0);
+                waitHandle.Set();
+            }
+            updateCount++;
+
+
+            if (!currentlyWorking && bareVertBuffer != null)
+            {
+                StartCoroutine(GetVertData(AsyncGPUReadback.Request(bareVertBuffer)));
+            }
+            UpdateVerts(0);
+
+            if (edit != -Vector3.one)
+            {
+                EditHeightMap();
+                edit = -Vector3.one;
+            }
+
+            if (updateCount > 4)
+            {
+                updateCount = 0;
+                waitHandle.WaitOne();
+                meshCollider.sharedMesh = colMesh;
+            }
         }
-        if (!currentlyWorking && bareVertBuffer != null)
+        else
         {
-            StartCoroutine(GetVertData(AsyncGPUReadback.Request(bareVertBuffer)));
+            if (!currentlyWorking && bareVertBuffer != null)
+            {
+                StartCoroutine(GetVertData(AsyncGPUReadback.Request(bareVertBuffer)));
+            }
+            UpdateVerts(0);
+            if (edit != -Vector3.one)
+            {
+                EditHeightMap();
+                edit = -Vector3.one;
+            }
+            colMesh.SetVertices(verts);
+            meshCollider.sharedMesh = colMesh;
+            
         }
     }
 
@@ -166,15 +224,14 @@ public class HeightMapController : MonoBehaviour
         if (!request.hasError)
         {
             verts = request.GetData<Vector3>().ToArray();
-            colMesh.SetVertices(verts);
-            meshCollider.sharedMesh = colMesh;
         }
         currentlyWorking = false;
     }
 
-    private void UpdateVerts()
+    private void UpdateVerts(int updateAll)
     {
         meshCompute.SetInt("resolution", RESOLUTION);
+        meshCompute.SetInt("updateAll", updateAll);
         meshCompute.SetFloat("cellSize", cellSize);
         meshCompute.SetFloat("halfSize", halfSize);
         meshCompute.SetBuffer(0, "cells", cellBuffer);

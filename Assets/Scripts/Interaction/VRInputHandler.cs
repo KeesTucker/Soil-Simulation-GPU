@@ -37,7 +37,7 @@ public class VRInputHandler : MonoBehaviour
                     voxelComputeController.fillType = 1;
                     voxelComputeController.EditVoxels(hitInfo);
                 }
-                else if (heightmapComputeController != null && heightmapComputeController.enabled)
+                if (heightmapComputeController != null && heightmapComputeController.enabled)
                 {
                     heightmapComputeController.fillType = 1;
                     heightmapComputeController.EditCells(hitInfo);
@@ -54,7 +54,7 @@ public class VRInputHandler : MonoBehaviour
                     voxelComputeController.fillType = 0;
                     voxelComputeController.EditVoxels(hitInfo);
                 }
-                else if (heightmapComputeController != null && heightmapComputeController.enabled)
+                if (heightmapComputeController != null && heightmapComputeController.enabled)
                 {
                     heightmapComputeController.fillType = 0;
                     heightmapComputeController.EditCells(hitInfo);

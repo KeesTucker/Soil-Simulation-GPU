@@ -1,6 +1,7 @@
 #pragma kernel CSMain
 
 int resolution;
+int updateAll;
 float cellSize;
 float halfSize;
 
@@ -39,7 +40,7 @@ float3 NormalFromEdges(float3 x, float3 y, float3 z)
 void CSMain(int3 id : SV_DispatchThreadID)
 {
     int i = id.x * resolution + id.z;
-    if (cells[i].update)
+    if (cells[i].update || updateAll)
     {
         float3 normal = 0;
         if (id.x > 0 && id.z > 0 && id.x < resolution - 1 && id.z < resolution - 1)

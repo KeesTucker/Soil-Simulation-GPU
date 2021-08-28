@@ -1,9 +1,9 @@
 {
     "m_SelectedDeviceId": "1PASH9A80F0033",
     "m_SelectedPackage": {
-        "deviceId": "",
-        "name": "",
-        "processId": 0,
+        "deviceId": "1PASH9A80F0033",
+        "name": "com.KeesTucker.OculusSoil",
+        "processId": 10733,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -72,6 +72,30 @@
             "deviceId": "1PASH9A80F0033",
             "name": "com.oculus.os.clearactivity",
             "processId": 9488,
+            "exited": false
+        },
+        {
+            "deviceId": "1PASH9A80F0033",
+            "name": "com.KeesTucker.OculusSoil",
+            "processId": 4889,
+            "exited": false
+        },
+        {
+            "deviceId": "1PASH9A80F0033",
+            "name": "com.KeesTucker.OculusSoil",
+            "processId": 5809,
+            "exited": false
+        },
+        {
+            "deviceId": "1PASH9A80F0033",
+            "name": "com.KeesTucker.OculusSoil",
+            "processId": 10181,
+            "exited": false
+        },
+        {
+            "deviceId": "1PASH9A80F0033",
+            "name": "com.KeesTucker.OculusSoil",
+            "processId": 10733,
             "exited": false
         }
     ],
