@@ -1,0 +1,55 @@
+
+#pragma kernel CSMain
+
+int resolution;
+
+int radius;
+int diameter;
+int sqrRadius;
+int fillType;
+
+float3 coord;
+
+struct Heightcell
+{
+    int update;
+    float height;
+};
+
+RWStructuredBuffer<Heightcell> cells;
+
+void UpdateAdjacentVoxels(int xCoord, int zCoord)
+{
+    for (int x = max(xCoord - 1, 0); x < min(xCoord + 1, resolution); x++)
+    {
+        for (int z = max(zCoord - 1, 0); z < min(zCoord + 1, resolution); z++)
+        {
+            cells[x * resolution + z].update = true;
+        }
+    }
+}
+
+[numthreads(8, 1, 8)]
+void CSMain(int3 id : SV_DispatchThreadID)
+{
+    if (coord.x == id.x && coord.z == id.z)
+    {
+        int xAreaStart = max(id.x - radius, 0);
+        int zAreaStart = max(id.z - radius, 0);
+        for (int x = xAreaStart; x < min(xAreaStart + diameter, resolution); x++)
+        {
+            for (int z = zAreaStart; z < min(zAreaStart + diameter, resolution); z++)
+            {
+                int xDistance = x - id.x;
+                int zDistance = z - id.z;
+                float sqrDistance = xDistance * xDistance + zDistance * zDistance;
+                if (sqrDistance < sqrRadius)
+                {
+                    int i = x * resolution + z;
+                    cells[i].height = (sqrRadius - sqrDistance);
+                    UpdateAdjacentVoxels(x, z);
+                }
+            }
+        }
+    }
+}
