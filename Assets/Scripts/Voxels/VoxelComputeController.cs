@@ -47,26 +47,26 @@ public class VoxelComputeController : MonoBehaviour
     //Size of the mesh buffer, square of resolution * number of verts per quad (6) * number of quads per voxel (6))
     const int NUM_VERTS_IN_MESH = RESOLUTION * RESOLUTION * RESOLUTION * 6 * 6;
 
-    public VoxelCollisionController voxelCollisionController;
+    [SerializeField] private VoxelCollisionController voxelCollisionController;
 
     //Make sure this has one of the soil shaders
-    public Material soilMat;
+    [SerializeField] private Material soilMat;
     //Make sure this has the soil/shadow shader
-    public Material shadowMat;
+    [SerializeField] private Material shadowMat;
     
     //Calculates edits
-    public ComputeShader editCompute;
+    [SerializeField]private ComputeShader editCompute;
     //Calculates gravity
-    public ComputeShader gravityCompute;
+    [SerializeField] private ComputeShader gravityCompute;
     //Calculates Spreading
-    public ComputeShader spreadCompute;
+    [SerializeField] private ComputeShader spreadCompute;
     //Calculates density
-    public ComputeShader densityCompute;
+    [SerializeField] private ComputeShader densityCompute;
     //Calculates weighted point offsets
-    public ComputeShader offsetCompute;
+    [SerializeField] private ComputeShader offsetCompute;
     //Calculates mesh
-    public ComputeShader meshCompute;
-    public ComputeShader meshStripCompute;
+    [SerializeField] private ComputeShader meshCompute;
+    [SerializeField] private ComputeShader meshStripCompute;
 
     //Holds status for each voxel
     private ComputeBuffer voxelBuffer;
@@ -79,27 +79,27 @@ public class VoxelComputeController : MonoBehaviour
     //Args to pass to compute shaders
     private ComputeBuffer tablesBuffer;
 
-    public bool castShadows = true;
+    [SerializeField] private bool castShadows = true;
     //Should we calculate gravity
-    public bool gravityOn = false;
+    [SerializeField] private bool gravityOn = false;
     //The rate at which voxels fall, arbitrary units atm
-    public int fallRate = 2;
+    [SerializeField] private int fallRate = 2;
     //Gradients for spreading
-    public int xZGradient = 1;
-    public int yGradient = 1;
+    [SerializeField] private int xZGradient = 1;
+    [SerializeField] private int yGradient = 1;
     //Size of voxel grid
-    public float size = 2;
+    [SerializeField] private float size = 2;
     //Half the size, used for centering
     private float halfSize;
     //Size of an individual voxel
     private float voxelSize;
     //To what extent should we round corners?
-    public float angularCompensation = 1f;
+    [SerializeField] private float angularCompensation = 1f;
     //The radius of voxels we check for volumetric density
-    public int weightingRadius = 3;
+    [SerializeField] private int weightingRadius = 3;
 
     //Edit settings
-    public int radius = 3;
+    [SerializeField] private int radius = 3;
     public int fillType;
 
     //Private variables for keeping track of stuff
@@ -109,12 +109,12 @@ public class VoxelComputeController : MonoBehaviour
     private int meshUpdateProgress = 0;
 
     //Requests for checking if a compute shader is finished
-    bool activeEditRequest = false;
-    AsyncGPUReadbackRequest editRequest;
-    bool activeSpreadRequest = false;
-    AsyncGPUReadbackRequest spreadRequest;
-    bool activeGravityRequest = false;
-    AsyncGPUReadbackRequest gravityRequest;
+    private bool activeEditRequest = false;
+    private AsyncGPUReadbackRequest editRequest;
+    private bool activeSpreadRequest = false;
+    private AsyncGPUReadbackRequest spreadRequest;
+    private bool activeGravityRequest = false;
+    private AsyncGPUReadbackRequest gravityRequest;
 
     //Bounds for drawing shadow
     private Bounds bounds = new Bounds();
@@ -123,7 +123,9 @@ public class VoxelComputeController : MonoBehaviour
     {
         //There are 8 threads run per shader group so resolution must be divisible by 8
         if (RESOLUTION % 8 != 0)
+        {
             throw new System.ArgumentException("RESOLUTION must be divisible be 8");
+        } 
 
         halfSize = size * 0.5f;
         voxelSize = size / RESOLUTION;
@@ -386,8 +388,6 @@ public class VoxelComputeController : MonoBehaviour
         meshCompute.SetBuffer(0, "voxels", voxelBuffer);
         meshCompute.SetBuffer(0, "verts", vertBuffer);
         meshCompute.Dispatch(0, RESOLUTION / 8, RESOLUTION / 8, RESOLUTION / 8);
-
-        
     }
     private void UpdateTris()
     {

@@ -13,6 +13,7 @@ public class VRInputHandler : MonoBehaviour
     private Vector2 joystickVector;
 
     public VoxelComputeController voxelComputeController;
+    public HeightMapController heightmapComputeController;
 
     public Transform lHandT;
     public Transform rHandT;
@@ -31,8 +32,16 @@ public class VRInputHandler : MonoBehaviour
             RaycastHit hitInfo;
             if (Physics.Raycast(rHandT.position, rHandT.forward, out hitInfo, 30f))
             {
-                voxelComputeController.fillType = 1;
-                voxelComputeController.EditVoxels(hitInfo);
+                if (voxelComputeController != null && voxelComputeController.enabled)
+                {
+                    voxelComputeController.fillType = 1;
+                    voxelComputeController.EditVoxels(hitInfo);
+                }
+                if (heightmapComputeController != null && heightmapComputeController.enabled)
+                {
+                    heightmapComputeController.fillType = 1;
+                    heightmapComputeController.EditCells(hitInfo);
+                }
             }
         }
         else if (lTriggerValue > 0.2f)
@@ -40,8 +49,16 @@ public class VRInputHandler : MonoBehaviour
             RaycastHit hitInfo;
             if (Physics.Raycast(lHandT.position, lHandT.forward, out hitInfo, 30f))
             {
-                voxelComputeController.fillType = 0;
-                voxelComputeController.EditVoxels(hitInfo);
+                if (voxelComputeController != null && voxelComputeController.enabled)
+                {
+                    voxelComputeController.fillType = 0;
+                    voxelComputeController.EditVoxels(hitInfo);
+                }
+                if (heightmapComputeController != null && heightmapComputeController.enabled)
+                {
+                    heightmapComputeController.fillType = 0;
+                    heightmapComputeController.EditCells(hitInfo);
+                }
             }
         }
 

@@ -1,0 +1,81 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4861222533112685001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4861222533112685003}
+  - component: {fileID: 4861222533112685002}
+  - component: {fileID: 4861222533112685005}
+  m_Layer: 0
+  m_Name: VoxelGrid
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4861222533112685003
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4861222533112685001}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1, y: 0, z: -1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4861222533112685002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4861222533112685001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60913b23db569d1458c815b8acb69636, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  voxelCollisionController: {fileID: 4861222533112685005}
+  soilMat: {fileID: 2100000, guid: c222ac36d24b127458d0e1cb8faabdfc, type: 2}
+  shadowMat: {fileID: 2100000, guid: 5471eb145481a164fa1f2afaa4cedac8, type: 2}
+  editCompute: {fileID: 7200000, guid: 7e3c97fbeadea194290a701378e8406d, type: 3}
+  gravityCompute: {fileID: 7200000, guid: d14616d527c7b1849b9e6385fae10dba, type: 3}
+  spreadCompute: {fileID: 7200000, guid: 233d032ff9c9cdd4d947615f968a673e, type: 3}
+  densityCompute: {fileID: 7200000, guid: 33e1e04b1251dc8439f02ebcdaffe561, type: 3}
+  offsetCompute: {fileID: 7200000, guid: ce96f40bad30acf478b7c309d0aefbf4, type: 3}
+  meshCompute: {fileID: 7200000, guid: 6b347a7d57a3a73448360b4a759a2be3, type: 3}
+  meshStripCompute: {fileID: 7200000, guid: a1abfa1a3e4661f4aa0042d0e30f6e6a, type: 3}
+  castShadows: 0
+  gravityOn: 1
+  fallRate: 2
+  xZGradient: 1
+  yGradient: 1
+  size: 16
+  angularCompensation: 1
+  weightingRadius: 2
+  radius: 3
+  fillType: 1
+--- !u!114 &4861222533112685005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4861222533112685001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9655a590bff5c0c41949ee7de54f19e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  resolution: 0
+  voxelSize: 0

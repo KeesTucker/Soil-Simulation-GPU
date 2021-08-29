@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 60913b23db569d1458c815b8acb69636
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - voxelCollisionController: {instanceID: 0}
+  - soilMat: {fileID: 2100000, guid: c222ac36d24b127458d0e1cb8faabdfc, type: 2}
+  - shadowMat: {fileID: 2100000, guid: 5471eb145481a164fa1f2afaa4cedac8, type: 2}
+  - editCompute: {fileID: 7200000, guid: 7e3c97fbeadea194290a701378e8406d, type: 3}
+  - gravityCompute: {fileID: 7200000, guid: d14616d527c7b1849b9e6385fae10dba, type: 3}
+  - spreadCompute: {fileID: 7200000, guid: 233d032ff9c9cdd4d947615f968a673e, type: 3}
+  - densityCompute: {fileID: 7200000, guid: 33e1e04b1251dc8439f02ebcdaffe561, type: 3}
+  - offsetCompute: {fileID: 7200000, guid: ce96f40bad30acf478b7c309d0aefbf4, type: 3}
+  - meshCompute: {fileID: 7200000, guid: 6b347a7d57a3a73448360b4a759a2be3, type: 3}
+  - meshStripCompute: {fileID: 7200000, guid: a1abfa1a3e4661f4aa0042d0e30f6e6a, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

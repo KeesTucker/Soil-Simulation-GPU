@@ -1,0 +1,61 @@
+#pragma kernel CSMain
+
+int resolution;
+int updateAll;
+float cellSize;
+float halfSize;
+
+//Struct to hold voxel data
+struct Heightcell
+{
+    int update;
+    float height;
+};
+//Fixed size buffer for all voxels
+RWStructuredBuffer<Heightcell> cells;
+
+//Struct to hold vert data
+struct Vert
+{
+    float4 position;
+    float3 normal;
+    int indicy;
+};
+//Fixed size buffer for verts
+RWStructuredBuffer<Vert> verts;
+RWStructuredBuffer<float3> bverts;
+
+float3 NormalFromEdges(float3 x, float3 y, float3 z)
+{
+    
+    float3 v = y - x;
+    float3 w = z - x;
+    
+    float3 n = normalize(cross(v, w));
+    
+    return n;
+}
+
+[numthreads(8, 1, 8)]
+void CSMain(int3 id : SV_DispatchThreadID)
+{
+    int i = id.x * resolution + id.z;
+    if (cells[i].update || updateAll)
+    {
+        float3 normal = 0;
+        if (id.x > 0 && id.z > 0 && id.x < resolution - 1 && id.z < resolution - 1)
+        {
+            verts[i].position = float4(id.x * cellSize - halfSize, cells[i].height, id.z * cellSize - halfSize, 1);
+            normal += NormalFromEdges(verts[i].position.xyz, verts[i + 1].position.xyz, verts[i + resolution].position.xyz);
+            normal += NormalFromEdges(verts[i].position.xyz, verts[i - 1].position.xyz, verts[i - resolution].position.xyz);
+        }
+        else
+        {
+            verts[i].position = float4(id.x * cellSize - halfSize, 0, id.z * cellSize - halfSize, 1);
+            normal = float3(0, 1, 0);
+        }
+        bverts[i] = verts[i].position.xyz + float3(halfSize, 0, halfSize);
+        verts[i].normal = normalize(normal);
+        cells[i].update = 0;
+    }
+}
