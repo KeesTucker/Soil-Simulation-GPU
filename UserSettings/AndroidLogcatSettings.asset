@@ -3,7 +3,7 @@
     "m_SelectedPackage": {
         "deviceId": "1PASH9A80F0033",
         "name": "com.KeesTucker.OculusSoil",
-        "processId": 10923,
+        "processId": 13170,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -108,6 +108,48 @@
             "deviceId": "1PASH9A80F0033",
             "name": "com.KeesTucker.OculusSoil",
             "processId": 10923,
+            "exited": false
+        },
+        {
+            "deviceId": "1PASH9A80F0033",
+            "name": "com.KeesTucker.OculusSoil",
+            "processId": 11119,
+            "exited": false
+        },
+        {
+            "deviceId": "1PASH9A80F0033",
+            "name": "com.KeesTucker.OculusSoil",
+            "processId": 11464,
+            "exited": false
+        },
+        {
+            "deviceId": "1PASH9A80F0033",
+            "name": "com.KeesTucker.OculusSoil",
+            "processId": 11798,
+            "exited": false
+        },
+        {
+            "deviceId": "1PASH9A80F0033",
+            "name": "com.KeesTucker.OculusSoil",
+            "processId": 12204,
+            "exited": false
+        },
+        {
+            "deviceId": "1PASH9A80F0033",
+            "name": "com.KeesTucker.OculusSoil",
+            "processId": 12668,
+            "exited": false
+        },
+        {
+            "deviceId": "1PASH9A80F0033",
+            "name": "com.KeesTucker.OculusSoil",
+            "processId": 12968,
+            "exited": false
+        },
+        {
+            "deviceId": "1PASH9A80F0033",
+            "name": "com.KeesTucker.OculusSoil",
+            "processId": 13170,
             "exited": false
         }
     ],

@@ -113,7 +113,7 @@ Shader "Soil/Plane" {
 				half3 viewDirectionWS = IN.viewDirWS;
 				float4 shadowCoord = TransformWorldToShadowCoord(IN.positionWS);
 				Light mainLight = GetMainLight(shadowCoord);
-				half3 attenuatedLightColor = mainLight.color * (mainLight.distanceAttenuation * mainLight.shadowAttenuation);
+				half3 attenuatedLightColor = mainLight.color;
 
 				half4 color = half4(diffuse.rgb * LightingLambert(attenuatedLightColor, mainLight.direction, normal), 1.0);
 

@@ -60,7 +60,7 @@ Shader "Soil/Simple" {
 				OUT.positionWS = vertData.position.xyz;
 				OUT.positionCS = TransformObjectToHClip(vertData.position.xyz);
 				OUT.viewDirWS = GetWorldSpaceViewDir(vertData.position.xyz);
-				OUT.normalWS = TransformObjectToWorldNormal(vertData.normal);
+				OUT.normalWS = vertData.normal;
 
 				return OUT;
 			}
@@ -117,7 +117,7 @@ Shader "Soil/Simple" {
 				half3 viewDirectionWS = IN.viewDirWS;
 				float4 shadowCoord = TransformWorldToShadowCoord(IN.positionWS);
 				Light mainLight = GetMainLight(shadowCoord);
-				half3 attenuatedLightColor = mainLight.color * (mainLight.distanceAttenuation * mainLight.shadowAttenuation);
+				half3 attenuatedLightColor = mainLight.color;
 
 				half4 color = half4(diffuse.rgb * LightingLambert(attenuatedLightColor, mainLight.direction, normal), 1.0);
 
