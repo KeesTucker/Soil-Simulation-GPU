@@ -10,7 +10,7 @@ public class BucketInteractor : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         voxelComputeController.fillType = 0;
-        voxelComputeController.EditVoxels(other.transform.position);
+        voxelComputeController.EditVoxels(bucketSpawner.offset + other.transform.position);
         bucketSpawner.IncreaseNumHeld();
     }
 }

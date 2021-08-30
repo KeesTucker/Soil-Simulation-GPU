@@ -3,7 +3,7 @@
     "m_SelectedPackage": {
         "deviceId": "1PASH9A80F0033",
         "name": "com.KeesTucker.OculusSoil",
-        "processId": 10733,
+        "processId": 10923,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -96,6 +96,18 @@
             "deviceId": "1PASH9A80F0033",
             "name": "com.KeesTucker.OculusSoil",
             "processId": 10733,
+            "exited": false
+        },
+        {
+            "deviceId": "1PASH9A80F0033",
+            "name": "com.KeesTucker.OculusSoil",
+            "processId": 10532,
+            "exited": false
+        },
+        {
+            "deviceId": "1PASH9A80F0033",
+            "name": "com.KeesTucker.OculusSoil",
+            "processId": 10923,
             "exited": false
         }
     ],

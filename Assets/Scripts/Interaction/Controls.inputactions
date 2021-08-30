@@ -14,6 +14,14 @@
                     "interactions": ""
                 },
                 {
+                    "name": "RGrip",
+                    "type": "Value",
+                    "id": "acd002d7-cbde-4cbb-a85b-0773038a310e",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
                     "name": "LTrigger",
                     "type": "Value",
                     "id": "7b6bf65e-be4e-4dc3-99b2-276848928888",
@@ -22,9 +30,25 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Thumbsticks",
+                    "name": "LGrip",
+                    "type": "Value",
+                    "id": "da7cc075-d9fa-4857-8923-3a9453a2f81a",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "ThumbstickL",
                     "type": "Value",
                     "id": "35a9b0cc-4e0d-4e77-827e-4439816bea68",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "ThumbstickR",
+                    "type": "Value",
+                    "id": "145ae80d-5d0f-4d80-95a2-4d4ff26e3882",
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": ""
@@ -34,11 +58,11 @@
                 {
                     "name": "",
                     "id": "4e734ba6-dafb-4a85-ad76-acd7a6acfb2d",
-                    "path": "*/{Primary2DAxis}",
+                    "path": "<XRController>{LeftHand}/primary2DAxis",
                     "interactions": "",
                     "processors": "StickDeadzone",
                     "groups": "",
-                    "action": "Thumbsticks",
+                    "action": "ThumbstickL",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -61,6 +85,39 @@
                     "processors": "",
                     "groups": "",
                     "action": "LTrigger",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8e8f4f73-83fe-4182-9a33-c2223033ca83",
+                    "path": "<XRController>{RightHand}/grip",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RGrip",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ea8b2b26-3007-4347-bbb4-52556c7c1f0e",
+                    "path": "<XRController>{LeftHand}/grip",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LGrip",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ba78c531-ba06-485c-9283-a3d7f68d4695",
+                    "path": "<XRController>{RightHand}/primary2DAxis",
+                    "interactions": "",
+                    "processors": "StickDeadzone",
+                    "groups": "",
+                    "action": "ThumbstickR",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
