@@ -22,6 +22,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.Rendering;
 using Unity.Collections;
+using System.Collections.Generic;
 
 public class VoxelComputeController : MonoBehaviour
 {
@@ -55,7 +56,7 @@ public class VoxelComputeController : MonoBehaviour
     [SerializeField] private Material shadowMat;
     
     //Calculates edits
-    [SerializeField]private ComputeShader editCompute;
+    [SerializeField] private ComputeShader editCompute;
     //Calculates gravity
     [SerializeField] private ComputeShader gravityCompute;
     //Calculates Spreading
@@ -68,6 +69,7 @@ public class VoxelComputeController : MonoBehaviour
     [SerializeField] private ComputeShader meshCompute;
     [SerializeField] private ComputeShader meshStripCompute;
 
+    private ComputeBuffer editsBuffer;
     //Holds status for each voxel
     private ComputeBuffer voxelBuffer;
     //Holds mesh data
@@ -103,7 +105,8 @@ public class VoxelComputeController : MonoBehaviour
     public int fillType;
 
     //Private variables for keeping track of stuff
-    private Vector3 edit = -Vector3.one;
+    private int editCount;
+    private List<Vector4> edits;
     private bool updateVoxelPhysics = false;
     private int updateAll = 0;
     private int meshUpdateProgress = 0;
@@ -131,6 +134,7 @@ public class VoxelComputeController : MonoBehaviour
         voxelSize = size / RESOLUTION;
         transform.localPosition = new Vector3(-halfSize, -halfSize, -halfSize);
 
+        editsBuffer = new ComputeBuffer(256, sizeof(float) * 4);
         voxelBuffer = new ComputeBuffer(NUM_VOXELS, sizeof(int) * 3 + sizeof(float) * 5);
         vertBuffer = new ComputeBuffer(NUM_VERTS_IN_MESH, sizeof(float) * 7 + sizeof(int), ComputeBufferType.Counter);
         triBuffer = new ComputeBuffer(NUM_VERTS_IN_MESH, sizeof(int), ComputeBufferType.Append);
@@ -191,7 +195,7 @@ public class VoxelComputeController : MonoBehaviour
 
         updateVoxelPhysics = true;
         updateAll = 1;
-
+        edits = new List<Vector4>();
 
         bounds.center = Vector3.zero;
         bounds.size = Vector3.one * size;
@@ -210,8 +214,20 @@ public class VoxelComputeController : MonoBehaviour
             int centerX = (int)(point.x / voxelSize);
             int centerY = (int)(point.y / voxelSize);
             int centerZ = (int)(point.z / voxelSize);
-            edit = new Vector3(centerX, centerY, centerZ);
+            editsBuffer.SetData(new Vector4[] { new Vector4(centerX, centerY, centerZ, 1) });
+            editCount = 1;
+            edits.Clear();
         }
+    }
+
+    public void EditVoxels(Vector3 pos)
+    {
+        Vector3 point = transform.InverseTransformPoint(pos);
+        int centerX = (int)(point.x / voxelSize);
+        int centerY = (int)(point.y / voxelSize);
+        int centerZ = (int)(point.z / voxelSize);
+        edits.Add(new Vector4(centerX, centerY, centerZ, 1));
+        editCount++;
     }
 
     //Fire off all the compute shaders here, some weird timing stuff going on here, needs to be cleaned up.
@@ -219,13 +235,23 @@ public class VoxelComputeController : MonoBehaviour
     {
         if (meshUpdateProgress == 0)
         {
-            if (edit != -Vector3.one && !activeEditRequest)
+            if (editCount > 0 && !activeEditRequest)
             {
-                UpdateEdit(edit);
+                
+                if (edits.Count == 0 && editCount == 1)
+                {
+                    UpdateEdit(1, editCount);
+                }
+                else
+                {
+                    editsBuffer.SetData(edits);
+                    UpdateEdit(0, editCount);
+                }
                 GL.Flush();
-                edit = -Vector3.one;
+                edits.Clear();
                 editRequest = AsyncGPUReadback.Request(voxelBuffer);
                 activeEditRequest = true;
+                editCount = 0;
             }
             if (updateVoxelPhysics)
             {
@@ -321,15 +347,17 @@ public class VoxelComputeController : MonoBehaviour
     }
 
     //Dispatch calls for the compute shaders
-    private void UpdateEdit(Vector4 coord)
+    private void UpdateEdit(int isolated, int count)
     {
+        editCompute.SetInt("isolated", isolated);
+        editCompute.SetInt("count", count);
         editCompute.SetInt("resolution", RESOLUTION);
         editCompute.SetInt("resolution2", RESOLUTION * RESOLUTION);
-        editCompute.SetVector("coord", coord);
         editCompute.SetInt("radius", radius);
         editCompute.SetInt("diameter", radius * 2 + 1);
         editCompute.SetInt("sqrRadius", radius * radius);
         editCompute.SetInt("fillType", fillType);
+        editCompute.SetBuffer(0, "edits", editsBuffer);
         editCompute.SetBuffer(0, "tables", tablesBuffer);
         editCompute.SetBuffer(0, "voxels", voxelBuffer);
         editCompute.Dispatch(0, RESOLUTION / 8, RESOLUTION / 8, RESOLUTION / 8);
@@ -447,6 +475,7 @@ public class VoxelComputeController : MonoBehaviour
 
     void OnDestroy()
     {
+        editsBuffer.Release();
         vertBuffer.Release();
         triBuffer.Release();
         voxelBuffer.Release();
