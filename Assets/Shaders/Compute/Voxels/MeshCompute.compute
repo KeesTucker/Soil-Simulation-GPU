@@ -45,35 +45,31 @@ float3 NormalFromEdges(float3 x, float3 y, float3 z)
 }
 
 void AddVert(int i, int voxelCoord, float3 position, float3 normal){
-    //This first if could possible be deleted, its a bit glitchy
-    if (true)//verts[i].indicy == -1 || updateAll == 1) //If currently no vert here
+    //Check if we have a parent
+    if (voxels[voxelCoord].indicy == -1) //We have no parent
     {
-        //Check if we have a parent
-        if (voxels[voxelCoord].indicy == -1) //We have no parent
-        {
-            voxels[voxelCoord].indicy = i; //Set this vert to parent vert
+        voxels[voxelCoord].indicy = i; //Set this vert to parent vert
         
-            //Create a vert
-            Vert vert;
-            vert.position = float4(position, 1.0);
-            vert.normal = normal;
-            vert.indicy = i;
-            verts[i] = vert;
-        }
-        else //If we are a child
-        {
-            int indicy = voxels[voxelCoord].indicy; //Set our indicy to that of our parent
-            verts[indicy].position = float4(position, 1.0); //Update position
-            //Recalculate Normals
-            verts[indicy].normal = normalize(verts[indicy].normal + normal);
+        //Create a vert
+        Vert vert;
+        vert.position = float4(position, 1.0);
+        vert.normal = normal;
+        vert.indicy = i;
+        verts[i] = vert;
+    }
+    else //If we are a child
+    {
+        int indicy = voxels[voxelCoord].indicy; //Set our indicy to that of our parent
+        verts[indicy].position = float4(position, 1.0); //Update position
+        //Recalculate Normals
+        verts[indicy].normal = normalize(verts[indicy].normal + normal);
         
-            //Create a placeholder vert
-            Vert vert;
-            vert.position = float4(position, 1.0);
-            vert.normal = normal;
-            vert.indicy = indicy;
-            verts[i] = vert;
-        }
+        //Create a placeholder vert
+        Vert vert;
+        vert.position = float4(position, 1.0);
+        vert.normal = normal;
+        vert.indicy = indicy;
+        verts[i] = vert;
     }
 }
 

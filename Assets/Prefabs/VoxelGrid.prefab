@@ -55,7 +55,7 @@ MonoBehaviour:
   offsetCompute: {fileID: 7200000, guid: ce96f40bad30acf478b7c309d0aefbf4, type: 3}
   meshCompute: {fileID: 7200000, guid: 6b347a7d57a3a73448360b4a759a2be3, type: 3}
   meshStripCompute: {fileID: 7200000, guid: a1abfa1a3e4661f4aa0042d0e30f6e6a, type: 3}
-  castShadows: 0
+  castShadows: 1
   gravityOn: 1
   fallRate: 2
   xZGradient: 1
@@ -63,7 +63,7 @@ MonoBehaviour:
   size: 16
   angularCompensation: 1
   weightingRadius: 2
-  radius: 3
+  radius: 4
   fillType: 1
 --- !u!114 &4861222533112685005
 MonoBehaviour:
@@ -77,5 +77,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9655a590bff5c0c41949ee7de54f19e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  voxelComputeController: {fileID: 4861222533112685002}
+  bucketSpawner: {fileID: 0}
   resolution: 0
-  voxelSize: 0
+  voxelSize: 0.5

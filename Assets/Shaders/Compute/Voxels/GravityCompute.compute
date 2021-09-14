@@ -78,6 +78,7 @@ void CSMain(int3 id : SV_DispatchThreadID)
                 UpdateAdjacentVoxels((i + u * resolution) - (distanceDown * resolution));
             }
         }
+        //Set update flag and update the rest of the mesh.
         tables[84] = 1;
     }
 }

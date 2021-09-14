@@ -34,11 +34,7 @@ public class HeightMapController : MonoBehaviour
     private ComputeBuffer drawArgsBuffer;
 
     [SerializeField] private bool castShadows = true;
-    [SerializeField] private bool gravityOn = false;
     [SerializeField] private float startingHeight = 5f;
-    [SerializeField] private int fallRate = 2;
-    [SerializeField] private int xZGradient = 1;
-    [SerializeField] private int yGradient = 1;
     [SerializeField] private float size = 16f;
 
     private float halfSize;

@@ -79,35 +79,21 @@ void CSMain (int3 id : SV_DispatchThreadID)
             //else calculate position of offset point based on densities
             else
             {
-                //get surrounding densities
-                float oD = voxels[o].density;
-                float xD = voxels[x].density;
-                float yD = voxels[y].density;
-                float zD = voxels[z].density;
-                float xyD = voxels[xy].density;
-                float xzD = voxels[xz].density;
-                float yzD = voxels[yz].density;
-                float xyzD = voxels[xyz].density;
-            
                 //Add up all densities for the plane in the negative direction, also get the number of solid voxels
-                float2 xNeg = float2((oD + yD + zD + yzD) / 4.0, CalcVoxelNumber(o, y, z, yz));
+                int xNegNum = CalcVoxelNumber(o, y, z, yz);
                 //Do the same for the plane in the positive direction
-                float2 xPos = float2((xD + xyD + xzD + xyzD) / 4.0, CalcVoxelNumber(x, xy, xz, xyz));
+                int xPosNum = CalcVoxelNumber(x, xy, xz, xyz);
                 //Calculate intial mesh smoothing based on lookup tables and numbers of solid voxels
-                float xOffset = tables[32 + (xNeg.y * 5) + xPos.y];
-                //Add extra smoothing to make mesh rounded based on density
-                xOffset += (xNeg.x - xPos.x) * angularCompensation;
+                float xOffset = tables[32 + (xNegNum * 5) + xPosNum];
                 
                 //Repeat on remaining two axis
-                float2 yNeg = float2((oD + xD + zD + xzD) / 4, CalcVoxelNumber(o, x, z, xz));
-                float2 yPos = float2((yD + xyD + yzD + xyzD) / 4, CalcVoxelNumber(y, xy, yz, xyz));
-                float yOffset = tables[32 + (yNeg.y * 5) + yPos.y];
-                yOffset += (yNeg.x - yPos.x - correctionFactor) * angularCompensation;
+                int yNegNum = CalcVoxelNumber(o, x, z, xz);
+                int yPosNum = CalcVoxelNumber(y, xy, yz, xyz);
+                float yOffset = tables[32 + (yNegNum * 5) + yPosNum];
             
-                float2 zNeg = float2((oD + xD + yD + xyD) / 4, CalcVoxelNumber(o, x, y, xy));
-                float2 zPos = float2((zD + xzD + yzD + xyzD) / 4, CalcVoxelNumber(z, xz, yz, xyz));
-                float zOffset = tables[32 + (zNeg.y * 5) + zPos.y];
-                zOffset += (zNeg.x - zPos.x) * angularCompensation;
+                int zNegNum = CalcVoxelNumber(o, x, y, xy);
+                int zPosNum = CalcVoxelNumber(z, xz, yz, xyz);
+                float zOffset = tables[32 + (zNegNum * 5) + zPosNum];
             
                 //Add them all up and apply the final position
                 float4 offset = float4(xOffset, yOffset, zOffset, 0) * voxelSize;

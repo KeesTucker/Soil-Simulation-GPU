@@ -1,0 +1,85 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5649795714823668670
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5649795714823668673}
+  - component: {fileID: 5649795714823668672}
+  - component: {fileID: 5649795714823668671}
+  m_Layer: 0
+  m_Name: ControllerInputs
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5649795714823668673
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5649795714823668670}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 9.201981, y: 0.57368374, z: -4.0617123}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5649795714823668672
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5649795714823668670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 720be4f2df4d5da44ac3361afe009292, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  triggerReference: {fileID: 4230946552492666075, guid: c68c26eb09972fd4881067375a82e4ba,
+    type: 3}
+  triggerDown: 0
+  gripReference: {fileID: -6001673634154066284, guid: c68c26eb09972fd4881067375a82e4ba,
+    type: 3}
+  gripDown: 0
+  joystickReference: {fileID: 6541957004959457944, guid: c68c26eb09972fd4881067375a82e4ba,
+    type: 3}
+  joystickVector: {x: 0, y: 0}
+  joystickFwd: 0
+  joystickDown: 0
+  joystickLeft: 0
+  joystickRight: 0
+--- !u!114 &5649795714823668671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5649795714823668670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b15f23a1606b6641a163cbed2ef3a56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  triggerReference: {fileID: 2394421339094248637, guid: c68c26eb09972fd4881067375a82e4ba,
+    type: 3}
+  triggerDown: 0
+  gripReference: {fileID: 6037581364258654611, guid: c68c26eb09972fd4881067375a82e4ba,
+    type: 3}
+  gripDown: 0
+  joystickReference: {fileID: -4444087398896298014, guid: c68c26eb09972fd4881067375a82e4ba,
+    type: 3}
+  joystickVector: {x: 0, y: 0}
+  joystickFwd: 0
+  joystickDown: 0
+  joystickLeft: 0
+  joystickRight: 0
