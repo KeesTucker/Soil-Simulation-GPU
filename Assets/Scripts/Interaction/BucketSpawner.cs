@@ -11,10 +11,7 @@ public class BucketSpawner : MonoBehaviour
     private float angleOfRelease = 45;
     [SerializeField] 
     private int speedOfRelease = 1;
-    [SerializeField]
-    private int pickupNumOffset = 8;
     private bool holding = true;
-    public Vector3 offset;
 
     void Update()
     {
@@ -24,7 +21,7 @@ public class BucketSpawner : MonoBehaviour
             {
                 for (int i = 0; i < speedOfRelease; i++)
                 {
-                    numHeld -= pickupNumOffset;
+                    numHeld -= 4;
                     voxelComputeController.fillType = 1;
                     voxelComputeController.EditVoxels(transform.position);
                 }

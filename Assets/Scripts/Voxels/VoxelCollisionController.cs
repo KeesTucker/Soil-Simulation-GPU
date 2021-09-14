@@ -90,6 +90,7 @@ public class VoxelCollisionController : MonoBehaviour
         //Just making sure nothing is wrong, and then use Ben Drury's script to generate the colliders
         if (voxels.Length > 0)
         {
+            Debug.Log(voxels.Length);
             SetCollisionMesh();
         }
         currentlyWorking = false;
