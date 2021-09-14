@@ -27,9 +27,6 @@ public class VoxelCollisionController : MonoBehaviour
         public Vector3Int size;
     }
 
-    [SerializeField] private VoxelComputeController voxelComputeController;
-    [SerializeField] private BucketSpawner bucketSpawner;
-
     //Resolution up to ^3 precomputed for slight performance boost.
     public int resolution;
     private int resolution2;
@@ -276,10 +273,6 @@ public class VoxelCollisionController : MonoBehaviour
                 boxTransform.localRotation = new Quaternion();
                 boxCollider.center = position * voxelSize;
                 boxCollider.size = (Vector3)box.size * voxelSize;
-                boxCollider.isTrigger = true;
-                BucketInteractor bucketInteractor = boxObject.AddComponent<BucketInteractor>();
-                bucketInteractor.voxelComputeController = voxelComputeController;
-                bucketInteractor.bucketSpawner = bucketSpawner;
                 colliders.Add(boxCollider);
             }
             colliderIndex++;

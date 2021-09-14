@@ -77,8 +77,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9655a590bff5c0c41949ee7de54f19e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  voxelComputeController: {fileID: 4861222533112685002}
-  bucketSpawner: {fileID: 0}
-  triggerCols: 1
   resolution: 0
   voxelSize: 0

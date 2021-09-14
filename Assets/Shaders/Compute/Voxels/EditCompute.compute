@@ -1,8 +1,6 @@
 
 #pragma kernel CSMain
 
-int isolated;
-
 int resolution;
 //Resolution squared
 int resolution2;
@@ -15,10 +13,8 @@ int sqrRadius;
 //Whether to fill or erase
 int fillType;
 
-int count;
-
-//Coordinates for us to edit
-StructuredBuffer<float4> edits;
+//Coordinate for us to edit
+float3 coord;
 
 StructuredBuffer<float> tables;
 
@@ -50,44 +46,34 @@ void UpdateAdjacentVoxels(int o)
 [numthreads(8, 8, 8)]
 void CSMain(int3 id : SV_DispatchThreadID)
 {
-    for (int i = 0; i < count; i++)
+    //If we are at the point where voxels are being changed, iterate thro a cube with side length = diameter.
+    //Then check if the points are within the sphere.
+    if (coord.x == id.x && coord.y == id.y && coord.z == id.z)
     {
-        float4 coord = edits[i];
-        if ((int) coord.x == id.x && (int) coord.y == id.y && (int) coord.z == id.z)
+        //Where to start looping from on each axis
+        int xAreaStart = max(id.x - radius, 2);
+        int yAreaStart = max(id.y - radius, 2);
+        int zAreaStart = max(id.z - radius, 2);
+        for (int x = xAreaStart; x < min(xAreaStart + diameter, resolution - 2); x++)
         {
-            if (true)//isolated == 1)
+            for (int y = yAreaStart; y < min(yAreaStart + diameter, resolution - 2); y++)
             {
-                int xAreaStart = max(id.x - radius, 2);
-                int yAreaStart = max(id.y - radius, 2);
-                int zAreaStart = max(id.z - radius, 2);
-                for (int x = xAreaStart; x < min(xAreaStart + diameter, resolution - 2); x++)
+                for (int z = zAreaStart; z < min(zAreaStart + diameter, resolution - 2); z++)
                 {
-                    for (int y = yAreaStart; y < min(yAreaStart + diameter, resolution - 2); y++)
+                    int xDistance = x - id.x;
+                    int yDistance = y - id.y;
+                    int zDistance = z - id.z;
+                    //Check distance
+                    float sqrDistance = xDistance * xDistance + yDistance * yDistance + zDistance * zDistance;
+                    if (sqrDistance < sqrRadius)
                     {
-                        for (int z = zAreaStart; z < min(zAreaStart + diameter, resolution - 2); z++)
-                        {
-                            int xDistance = x - id.x;
-                            int yDistance = y - id.y;
-                            int zDistance = z - id.z;
-                                //Check distance
-                            float sqrDistance = xDistance * xDistance + yDistance * yDistance + zDistance * zDistance;
-                            if (sqrDistance < sqrRadius)
-                            {
-                                int o = x * resolution2 + y * resolution + z;
-                                    //Set cell to solid and hit it with an update
-                                voxels[o].solid = fillType;
-                                UpdateAdjacentVoxels(o);
-                            }
-                        }
+                        int o = x * resolution2 + y * resolution + z;
+                        //Set cell to solid and hit it with an update
+                        voxels[o].solid = fillType;
+                        UpdateAdjacentVoxels(o);
                     }
                 }
             }
-            else
-            {
-                int o = id.x * resolution2 + id.y * resolution + id.z;
-                voxels[o].solid = fillType;
-                UpdateAdjacentVoxels(o);
-            }
         }
-    } 
+    }
 }

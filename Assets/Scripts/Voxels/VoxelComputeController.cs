@@ -54,27 +54,17 @@ public class VoxelComputeController : MonoBehaviour
     [SerializeField] private Material soilMat;
     //Make sure this has the soil/shadow shader
     [SerializeField] private Material shadowMat;
-    
-    //Calculates edits
+
     [SerializeField] private ComputeShader editCompute;
-    //Calculates gravity
     [SerializeField] private ComputeShader gravityCompute;
-    //Calculates Spreading
     [SerializeField] private ComputeShader spreadCompute;
-    //Calculates density
-    [SerializeField] private ComputeShader densityCompute;
-    //Calculates weighted point offsets
     [SerializeField] private ComputeShader offsetCompute;
-    //Calculates mesh
     [SerializeField] private ComputeShader meshCompute;
     [SerializeField] private ComputeShader meshStripCompute;
 
     private ComputeBuffer editsBuffer;
-    //Holds status for each voxel
     private ComputeBuffer voxelBuffer;
-    //Holds mesh data
     private ComputeBuffer vertBuffer;
-    //Indicies
     private ComputeBuffer triBuffer;
     //Args to pass to DrawIndirect()
     private ComputeBuffer drawArgsBuffer;
@@ -82,7 +72,6 @@ public class VoxelComputeController : MonoBehaviour
     private ComputeBuffer tablesBuffer;
 
     [SerializeField] private bool castShadows = true;
-    //Should we calculate gravity
     [SerializeField] private bool gravityOn = false;
     //The rate at which voxels fall, arbitrary units atm
     [SerializeField] private int fallRate = 2;
@@ -91,7 +80,6 @@ public class VoxelComputeController : MonoBehaviour
     [SerializeField] private int yGradient = 1;
     //Size of voxel grid
     [SerializeField] private float size = 2;
-    //Half the size, used for centering
     private float halfSize;
     //Size of an individual voxel
     private float voxelSize;
@@ -128,7 +116,7 @@ public class VoxelComputeController : MonoBehaviour
         if (RESOLUTION % 8 != 0)
         {
             throw new System.ArgumentException("RESOLUTION must be divisible be 8");
-        } 
+        }
 
         halfSize = size * 0.5f;
         voxelSize = size / RESOLUTION;
@@ -237,7 +225,7 @@ public class VoxelComputeController : MonoBehaviour
         {
             if (editCount > 0 && !activeEditRequest)
             {
-                
+
                 if (edits.Count == 0 && editCount == 1)
                 {
                     UpdateEdit(1, editCount);
@@ -322,17 +310,11 @@ public class VoxelComputeController : MonoBehaviour
 
         if (updateVoxelPhysics && meshUpdateProgress == 0)
         {
-            UpdateDensity(updateAll);
+            UpdateOffsets(updateAll);
             GL.Flush();
             meshUpdateProgress = 1;
         }
         else if (meshUpdateProgress == 1)
-        {
-            UpdateOffsets(updateAll);
-            GL.Flush();
-            meshUpdateProgress = 2;
-        }
-        else if (meshUpdateProgress == 2)
         {
             UpdateVerts(updateAll);
             UpdateTris();
@@ -380,18 +362,6 @@ public class VoxelComputeController : MonoBehaviour
         gravityCompute.SetBuffer(0, "tables", tablesBuffer);
         gravityCompute.SetBuffer(0, "voxels", voxelBuffer);
         gravityCompute.Dispatch(0, RESOLUTION / 8, RESOLUTION / 8, RESOLUTION / 8);
-    }
-    private void UpdateDensity(int updateAll)
-    {
-        densityCompute.SetInt("resolution", RESOLUTION);
-        densityCompute.SetInt("resolution2", RESOLUTION * RESOLUTION);
-        densityCompute.SetInt("weightingRadius", weightingRadius);
-        densityCompute.SetInt("diameter", weightingRadius * 2 + 1);
-        densityCompute.SetInt("sqrWeightingRadius", weightingRadius * weightingRadius);
-        densityCompute.SetInt("updateAll", updateAll);
-        densityCompute.SetBuffer(0, "tables", tablesBuffer);
-        densityCompute.SetBuffer(0, "voxels", voxelBuffer);
-        densityCompute.Dispatch(0, RESOLUTION / 8, RESOLUTION / 8, RESOLUTION / 8);
     }
     private void UpdateOffsets(int updateAll)
     {

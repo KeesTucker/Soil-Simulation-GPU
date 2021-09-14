@@ -399,6 +399,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+<<<<<<< HEAD
 --- !u!1 &389529556
 GameObject:
   m_ObjectHideFlags: 0
@@ -542,6 +543,21 @@ Transform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &460435119
+=======
+--- !u!114 &557357802 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4861222533112685002, guid: 97a4333961c8cb948b88456166294d89,
+    type: 3}
+  m_PrefabInstance: {fileID: 4861222533668993824}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60913b23db569d1458c815b8acb69636, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &895790142
+>>>>>>> parent of 1e2f98f (Got bucket working)
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1764,6 +1780,7 @@ PrefabInstance:
       propertyPath: m_Name
       value: VoxelGrid
       objectReference: {fileID: 0}
+<<<<<<< HEAD
     - target: {fileID: 4861222533112685002, guid: 97a4333961c8cb948b88456166294d89,
         type: 3}
       propertyPath: size
@@ -1779,6 +1796,8 @@ PrefabInstance:
       propertyPath: castShadows
       value: 1
       objectReference: {fileID: 0}
+=======
+>>>>>>> parent of 1e2f98f (Got bucket working)
     - target: {fileID: 4861222533112685003, guid: 97a4333961c8cb948b88456166294d89,
         type: 3}
       propertyPath: m_RootOrder
@@ -1787,7 +1806,7 @@ PrefabInstance:
     - target: {fileID: 4861222533112685003, guid: 97a4333961c8cb948b88456166294d89,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 4861222533112685003, guid: 97a4333961c8cb948b88456166294d89,
         type: 3}
@@ -1797,7 +1816,7 @@ PrefabInstance:
     - target: {fileID: 4861222533112685003, guid: 97a4333961c8cb948b88456166294d89,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 4861222533112685003, guid: 97a4333961c8cb948b88456166294d89,
         type: 3}
@@ -1834,10 +1853,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+<<<<<<< HEAD
     - target: {fileID: 4861222533112685005, guid: 97a4333961c8cb948b88456166294d89,
         type: 3}
       propertyPath: bucketSpawner
       value: 
       objectReference: {fileID: 1129081684}
+=======
+>>>>>>> parent of 1e2f98f (Got bucket working)
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 97a4333961c8cb948b88456166294d89, type: 3}
