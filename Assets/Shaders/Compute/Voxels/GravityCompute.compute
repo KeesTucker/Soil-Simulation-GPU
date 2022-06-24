@@ -49,7 +49,7 @@ void CSMain(int3 id : SV_DispatchThreadID)
     //If current voxel is solid and the one below it is empty and we are within bounds
     if (voxels[i].solid == 1 && voxels[i - resolution].solid == 0 && id.y > 2)
     {
-        //Iterate upwards until we find empty voxels again, this gived us our "distanceUp"
+        //Iterate upwards until we find empty voxels again, this gives us our "distanceUp"
         for (distanceUp = 0; id.y + distanceUp <= resolution; distanceUp++)
         {
             if (voxels[i + (distanceUp * resolution)].solid == 0)

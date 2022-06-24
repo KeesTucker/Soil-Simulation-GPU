@@ -42,7 +42,7 @@ public class VoxelComputeController : MonoBehaviour
     };
 
     //Resolution of grid (multiple of 8) (8 * 14 is max)
-    const int RESOLUTION = 8 * 4;
+    const int RESOLUTION = 8 * 8;
     //Size of voxel buffer and density buffer
     const int NUM_VOXELS = RESOLUTION * RESOLUTION * RESOLUTION;
     //Size of the mesh buffer, square of resolution * number of verts per quad (6) * number of quads per voxel (6))
