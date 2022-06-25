@@ -133,13 +133,16 @@ Shader "Soil/PBR Full" {
 			nyT.x *= axisSign.y;
 			nzT.x *= -axisSign.z;
 
-			half3 absVertNormal = abs(IN.normalWS);
+			half3 normalTS = normalize(nxT + nyT + nzT);
+			surfaceData.normalTS = normalTS;
 
+			half3 absVertNormal = abs(IN.normalWS);
+			
 			//swizzle world normals to match tangent space and apply reoriented normal mapping blend
 			half3 nx = blend_rnm(half3(IN.normalWS.zy, absVertNormal.x), nxT);
 			half3 ny = blend_rnm(half3(IN.normalWS.xz, absVertNormal.y), nyT);
 			half3 nz = blend_rnm(half3(IN.normalWS.xy, absVertNormal.z), nzT);
-
+			
 			// apply world space sign to tangent space Z
 			nx.z *= axisSign.x;
 			ny.z *= axisSign.y;

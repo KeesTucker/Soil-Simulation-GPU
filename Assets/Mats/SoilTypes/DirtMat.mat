@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: DirtMat
-  m_Shader: {fileID: 4800000, guid: 26210006cdad0084bad8b8a9988e44b6, type: 3}
+  m_Shader: {fileID: 4800000, guid: 7fd95202b9f9376478d04f50332915df, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords:
   - _NORMALMAP
@@ -26,7 +26,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: f972399d12a6d2149a48cf4c9700805e, type: 3}
+        m_Texture: {fileID: 2800000, guid: 158e115ba4c36134c91336b08d06d144, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:

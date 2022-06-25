@@ -15,14 +15,16 @@ MonoBehaviour:
   version: 4
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: GravelMat
-  m_Shader: {fileID: 4800000, guid: 26210006cdad0084bad8b8a9988e44b6, type: 3}
-  m_ShaderKeywords: _NORMALMAP
+  m_Shader: {fileID: 4800000, guid: 7fd95202b9f9376478d04f50332915df, type: 3}
+  m_ValidKeywords: []
+  m_InvalidKeywords:
+  - _NORMALMAP
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
