@@ -276,7 +276,6 @@ public class VoxelCollisionController : MonoBehaviour
                 boxTransform.localRotation = new Quaternion();
                 boxCollider.center = position * voxelSize;
                 boxCollider.size = (Vector3)box.size * voxelSize;
-                boxCollider.isTrigger = true;
                 if (bucketSpawner != null)
                 {
                     BucketInteractor bucketInteractor = boxObject.AddComponent<BucketInteractor>();

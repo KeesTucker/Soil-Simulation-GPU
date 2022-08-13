@@ -35,7 +35,6 @@ RWStructuredBuffer<Vert> verts;
 
 float3 NormalFromEdges(float3 x, float3 y, float3 z)
 {
-    
     float3 v = y - x;
     float3 w = z - x;
     

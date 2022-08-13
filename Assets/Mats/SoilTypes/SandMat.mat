@@ -21,7 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: SandMat
-  m_Shader: {fileID: 4800000, guid: 7fd95202b9f9376478d04f50332915df, type: 3}
+  m_Shader: {fileID: 4800000, guid: 26210006cdad0084bad8b8a9988e44b6, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords:
   - _NORMALMAP
